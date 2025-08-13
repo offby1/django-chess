@@ -10,8 +10,27 @@
             </button>
         </form>
 
-        hello from template-land
+        <div class="board">
+            {% for piece in pieces %}
+            <div>
+                {% if piece %}
+                {{ piece }}
+                {% else %}
+                &nbsp;
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
 
-        Your board is {{ board }}
     </body>
+    <style>
+     .board {
+         display: grid;
+         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+     }
+     .board > div {
+         border: 1px solid black;
+         aspect-ratio: 1;
+     }
+    </style>
 </html>

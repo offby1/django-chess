@@ -10,7 +10,7 @@ display existing game with ID 1.
 
 The response should include
 - which pieces are where
-- perhaps the SVG for each piece; chess.svc.piece can do this for us
+- perhaps the SVG for each piece; `chess.svg.piece` can do this for us
 - whose turn is it
 - maybe a summary of captured pieces (even though you could deduce that by looking at the board)
 - maybe which moves are legal (so that if they click an illegal square, we can yell at them without a round trip to the server)
