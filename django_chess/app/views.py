@@ -13,10 +13,12 @@ from django_chess.app.models import Game
 def new_game(request: HttpRequest) -> HttpResponse:
     board = chess.Board()
     new_game = Game.objects.create(board_fen=board.board_fen())
-    return HttpResponseRedirect(reverse("app:game", kwargs=dict(game_display_number=new_game.pk)))
+    return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
 
 
 @require_http_methods(["GET"])
 def game(request: HttpRequest, game_display_number: int) -> HttpResponse:
     g = Game.objects.filter(pk=game_display_number).first()
-    return TemplateResponse(request, "app/game.html", context={"g": g})
+    board = chess.Board()
+    board.set_board_fen(g.board_fen)
+    return TemplateResponse(request, "app/game.html", context={"board": str(board)})

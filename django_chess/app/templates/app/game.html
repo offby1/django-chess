@@ -1,3 +1,17 @@
-hello from template-land
+<html>
+    <body>
+        <form method="post" action="/game/">
+            {% csrf_token %}
+            <button class="btn btn-primary"
+                    type="submit"
+                    name="action"
+                    value="Make a new game, yo">
+                NEW GAME
+            </button>
+        </form>
 
-Your board is {{ g }}
+        hello from template-land
+
+        Your board is {{ board }}
+    </body>
+</html>
