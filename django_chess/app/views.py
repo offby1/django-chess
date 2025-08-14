@@ -14,7 +14,7 @@ from django_chess.app.models import Game
 
 
 def get_buttonlike_div(
-    board: chess.Board, rank: int, file_: int, game_display_number: int
+    *, board: chess.Board, rank: int, file_: int, game_display_number: int, highlight: bool = False
 ) -> SafeString:
     # see what's on the board at this spot.
     # - empty
@@ -38,15 +38,27 @@ def get_buttonlike_div(
         context={
             "background_color_class": background_color_class,
             "content": SafeString(svg_piece),
+            "highlight": highlight,
             "target": target,
         },
     )
 
 
-def get_squares(board: chess.Board, game_display_number: int) -> Iterator[dict[str, SafeString]]:
+def get_squares(
+    *, board: chess.Board, game_display_number: int, rank_and_file: dict[str, int]
+) -> Iterator[dict[str, SafeString]]:
     for rank in range(7, -1, -1):
         for file_ in range(8):
-            yield {"button": get_buttonlike_div(board, rank, file_, game_display_number)}
+            highlight = rank == rank_and_file.get("rank") and file_ == rank_and_file.get("file")
+            yield {
+                "button": get_buttonlike_div(
+                    board=board,
+                    rank=rank,
+                    file_=file_,
+                    game_display_number=game_display_number,
+                    highlight=highlight,
+                )
+            }
 
 
 @require_http_methods(["GET", "POST"])
@@ -64,11 +76,17 @@ def game(request: HttpRequest) -> HttpResponse:
 
     board = chess.Board()
     board.set_board_fen(g.board_fen)
+    rank_and_file: dict[str, int] = {
+        k: int(v) for k, v in request.GET.dict().items() if k in {"rank", "file"}
+    }
+
     return TemplateResponse(
         request,
         "app/game.html",
         context={
             "outcome": str(board.outcome()),
-            "squares": get_squares(board, g.pk),
+            "squares": get_squares(
+                board=board, game_display_number=g.pk, rank_and_file=rank_and_file
+            ),
         },
     )
