@@ -11,6 +11,7 @@
         </form>
 
         Request: {{ request }}
+        {% if outcome %}
         Outcome: {{ outcome }}
         <div class="board">
             {% for s in squares %}
@@ -19,6 +20,7 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
 
     </body>
     <style>

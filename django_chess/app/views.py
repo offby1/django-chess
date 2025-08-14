@@ -14,11 +14,13 @@ from django_chess.app.models import Game
 # Create your views here.
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["GET", "POST"])
 def new_game(request: HttpRequest) -> HttpResponse:
-    board = chess.Board()
-    new_game = Game.objects.create(board_fen=board.board_fen())
-    return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
+    if request.method == "POST":
+        new_game = Game.objects.create(board_fen=chess.Board().board_fen())
+        return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
+
+    return TemplateResponse(request, "app/game.html", context={})
 
 
 def get_button(board: chess.Board, rank: int, file_: int) -> SafeString:
