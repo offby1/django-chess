@@ -8,3 +8,8 @@ dependencies = [
     "django>=5.2.5",
     "python-chess>=1.999",
 ]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.17.1",
+]
