@@ -16,11 +16,13 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.http import HttpResponseRedirect
+from django.urls import path, reverse
 
 from django_chess.app import views
 
 urlpatterns = [
+    path("", lambda request: HttpResponseRedirect(reverse("new-game"))),
     path("admin/", admin.site.urls),
     path("game/", views.new_game, name="new-game"),
     path("game/<int:game_display_number>/", views.game, name="game"),
