@@ -15,11 +15,7 @@
         <div class="board">
             {% for s in squares %}
             <div class="{{ s.class }}">
-                {% if s.piece %}
-                {{ s.piece }}
-                {% else %}
-                &nbsp;
-                {% endif %}
+                {{ s.button }}
             </div>
             {% endfor %}
         </div>

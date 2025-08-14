@@ -21,21 +21,28 @@ def new_game(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
 
 
+def get_button(board, rank, file_):
+    # see what's on the board at this spot.
+    # - empty
+    # - piece of active player
+    # - piece of other player
+    piece = board.piece_map().get(chess.square(file_, rank), None)
+
+    if piece is None:
+        return SafeString("")
+
+    return SafeString(chess.svg.piece(piece))
+
+
 def get_squares(board: chess.Board) -> Iterator[SafeString]:
     for rank in range(7, -1, -1):
         for file_ in range(8):
             background_color_class = "light" if (rank - file_) % 2 else "dark"
-            n = chess.square(file_, rank)
-            piece = board.piece_map().get(n, None)
 
-            rv = {"class": background_color_class}
-
-            if piece is not None:
-                rv["piece"] = SafeString(chess.svg.piece(piece))
-            else:
-                rv["piece"] = SafeString("")
-
-            yield rv
+            yield {
+                "class": background_color_class,
+                "button": get_button(board, rank, file_),
+            }
 
 
 @require_http_methods(["GET"])
