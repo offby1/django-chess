@@ -13,7 +13,9 @@ from django.views.decorators.http import require_http_methods
 from django_chess.app.models import Game
 
 
-def get_buttonlike_div(board: chess.Board, rank: int, file_: int, game_display_number: int) -> SafeString:
+def get_buttonlike_div(
+    board: chess.Board, rank: int, file_: int, game_display_number: int
+) -> SafeString:
     # see what's on the board at this spot.
     # - empty
     # - piece of active player
@@ -25,11 +27,7 @@ def get_buttonlike_div(board: chess.Board, rank: int, file_: int, game_display_n
 
     target = reverse(
         "game",
-        query=dict(
-            game_display_number=game_display_number,
-            rank=rank,
-            file=file_
-        ),
+        query=dict(game_display_number=game_display_number, rank=rank, file=file_),
     )
 
     if piece is not None:

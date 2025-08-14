@@ -1,0 +1,34 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v5.0.0
+  hooks:
+    - id: trailing-whitespace
+      args: [--chars," \t"]
+
+- repo: https://github.com/adamchainz/django-upgrade
+  rev: "1.25.0"
+  hooks:
+    - id: django-upgrade
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.11.11
+  hooks:
+    # Run the linter.
+    - id: ruff
+      exclude: '/migrations/'
+      args:
+        - "--unsafe-fixes"
+        - "--fix"
+    # Run the formatter.
+    - id: ruff-format
+      exclude: '/migrations/'
+
+- repo: https://github.com/djlint/djLint
+  rev: v1.36.4
+  hooks:
+    - id: djlint-reformat-django
+
+    - id: djlint-django

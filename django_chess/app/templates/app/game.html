@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="online chess, Yo">
+    <meta name="keywords" content="chess">
+    <title>Chess, Yo</title>
     <body>
-        <form method="post" action="/game/">
+        <form method="post" action="{% url 'game' %}">
             {% csrf_token %}
             <button class="btn btn-primary"
                     type="submit"
                     name="action"
-                    value="Make a new game, yo">
-                NEW GAME
-            </button>
+                    value="Make a new game, yo">NEW GAME</button>
         </form>
-
         Request: {{ request }}
         {% if outcome %}
-        Outcome: {{ outcome }}
-        <div class="board">
-            {% for s in squares %}
-            <div class="{{ s.class }}">
-                {{ s.button }}
+            Outcome: {{ outcome }}
+            <div class="board">
+                {% for s in squares %}<div class="{{ s.class }}">{{ s.button }}</div>{% endfor %}
             </div>
-            {% endfor %}
-        </div>
         {% endif %}
-
     </body>
     <style>
      .board {
