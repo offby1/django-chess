@@ -3,7 +3,7 @@ import random
 import chess
 
 
-def main():
+def main() -> None:
     board = chess.Board()
     while True:
         outcome = board.outcome()

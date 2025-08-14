@@ -21,7 +21,7 @@ def new_game(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
 
 
-def get_button(board, rank, file_):
+def get_button(board: chess.Board, rank: int, file_: int) -> SafeString:
     # see what's on the board at this spot.
     # - empty
     # - piece of active player
@@ -34,13 +34,13 @@ def get_button(board, rank, file_):
     return SafeString(chess.svg.piece(piece))
 
 
-def get_squares(board: chess.Board) -> Iterator[SafeString]:
+def get_squares(board: chess.Board) -> Iterator[dict[str, SafeString]]:
     for rank in range(7, -1, -1):
         for file_ in range(8):
             background_color_class = "light" if (rank - file_) % 2 else "dark"
 
             yield {
-                "class": background_color_class,
+                "class": SafeString(background_color_class),
                 "button": get_button(board, rank, file_),
             }
 
