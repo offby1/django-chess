@@ -22,8 +22,7 @@ from django.urls import path, reverse
 from django_chess.app import views
 
 urlpatterns = [
-    path("", lambda request: HttpResponseRedirect(reverse("new-game"))),
+    path("", lambda request: HttpResponseRedirect(reverse("game"))),
     path("admin/", admin.site.urls),
-    path("game/", views.new_game, name="new-game"),
-    path("game/<int:game_display_number>/", views.game, name="game"),
+    path("game/", views.game, name="game"),
 ]
