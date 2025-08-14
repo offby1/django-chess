@@ -10,11 +10,13 @@
             </button>
         </form>
 
+        Request: {{ request }}
+        Outcome: {{ outcome }}
         <div class="board">
-            {% for piece in pieces %}
-            <div>
-                {% if piece %}
-                {{ piece }}
+            {% for s in squares %}
+            <div class="{{ s.class }}">
+                {% if s.piece %}
+                {{ s.piece }}
                 {% else %}
                 &nbsp;
                 {% endif %}
@@ -31,6 +33,12 @@
      .board > div {
          border: 1px solid black;
          aspect-ratio: 1;
+     }
+     .board > div.dark {
+         background-color: darkgrey;
+     }
+     .board > div.light {
+         background-color: lightgrey;
      }
     </style>
 </html>
