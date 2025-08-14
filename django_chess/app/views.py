@@ -14,7 +14,12 @@ from django_chess.app.models import Game
 
 
 def get_buttonlike_div(
-    *, board: chess.Board, rank: int, file_: int, game_display_number: int, highlight: bool = False
+    *,
+    board: chess.Board,
+    rank: int,
+    file_: int,
+    game_display_number: int,
+    highlight_class: str | None,
 ) -> SafeString:
     # see what's on the board at this spot.
     # - empty
@@ -38,25 +43,37 @@ def get_buttonlike_div(
         context={
             "background_color_class": background_color_class,
             "content": SafeString(svg_piece),
-            "highlight": highlight,
+            "highlight": highlight_class,
             "target": target,
         },
     )
 
 
 def get_squares(
-    *, board: chess.Board, game_display_number: int, rank_and_file: dict[str, int]
+    *, board: chess.Board, game_display_number: int, selected_square: int | None
 ) -> Iterator[dict[str, SafeString]]:
+    legal_moves = list(board.legal_moves) if board.outcome() is None else []
+    selected_squares_moves = [m for m in legal_moves if selected_square == m.from_square]
     for rank in range(7, -1, -1):
         for file_ in range(8):
-            highlight = rank == rank_and_file.get("rank") and file_ == rank_and_file.get("file")
+            this_square = chess.square(file_, rank)
+            highlight_class = None
+            if (
+                selected_square is not None
+                and rank == chess.square_rank(selected_square)
+                and file_ == chess.square_file(selected_square)
+            ):
+                highlight_class = "highlighted"
+            else:
+                if any(m.to_square == this_square for m in selected_squares_moves):
+                    highlight_class = "potential-target"
             yield {
                 "button": get_buttonlike_div(
                     board=board,
                     rank=rank,
                     file_=file_,
                     game_display_number=game_display_number,
-                    highlight=highlight,
+                    highlight_class=highlight_class,
                 )
             }
 
@@ -76,9 +93,12 @@ def game(request: HttpRequest) -> HttpResponse:
 
     board = chess.Board()
     board.set_board_fen(g.board_fen)
-    rank_and_file: dict[str, int] = {
-        k: int(v) for k, v in request.GET.dict().items() if k in {"rank", "file"}
-    }
+
+    selected_square = None
+    if (rank := request.GET.get("rank")) is not None and (
+        file_ := request.GET.get("file")
+    ) is not None:
+        selected_square = chess.square(int(file_), int(rank))
 
     return TemplateResponse(
         request,
@@ -86,7 +106,7 @@ def game(request: HttpRequest) -> HttpResponse:
         context={
             "outcome": str(board.outcome()),
             "squares": get_squares(
-                board=board, game_display_number=g.pk, rank_and_file=rank_and_file
+                board=board, game_display_number=g.pk, selected_square=selected_square
             ),
         },
     )

@@ -6,6 +6,12 @@
     <meta name="keywords" content="chess">
     <title>Chess, Yo</title>
     <body>
+        {% if outcome %}
+            <div class="board">
+                {% for s in squares %}<div class="{{ s.class }}">{{ s.button }}</div>{% endfor %}
+            </div>
+            Outcome: {{ outcome }}
+        {% endif %}
         <form method="post" action="{% url 'game' %}">
             {% csrf_token %}
             <button class="btn btn-primary"
@@ -13,13 +19,6 @@
                     name="action"
                     value="Make a new game, yo">NEW GAME</button>
         </form>
-        Request: {{ request }}
-        {% if outcome %}
-            Outcome: {{ outcome }}
-            <div class="board">
-                {% for s in squares %}<div class="{{ s.class }}">{{ s.button }}</div>{% endfor %}
-            </div>
-        {% endif %}
     </body>
     <style>
      .board {
@@ -41,5 +40,8 @@
      .highlighted {
          background-color: lightgreen;
      }
+    .potential-target {
+        background-color: blue;
+    }
     </style>
 </html>
