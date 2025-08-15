@@ -1,3 +1,5 @@
 <div class="{% if highlight %} {{ highlight }} {% else %} {{ background_color_class }} {% endif %} ">
-    <a href="{{ target }}">{{ content }}</a>
+    {% if target %}<a href="{{ target }}">{% endif %}
+        {{ content }}
+        {% if target %}</a>{% endif %}
 </div>

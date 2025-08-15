@@ -20,6 +20,7 @@ def get_buttonlike_div(
     file_: int,
     game_display_number: int,
     highlight_class: str | None,
+    link_target: str | None,
 ) -> SafeString:
     # see what's on the board at this spot.
     # - empty
@@ -30,11 +31,6 @@ def get_buttonlike_div(
 
     svg_piece = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45 45"></svg>"""
 
-    target = reverse(
-        "game",
-        query=dict(game_display_number=game_display_number, rank=rank, file=file_),
-    )
-
     if piece is not None:
         svg_piece = chess.svg.piece(piece)
 
@@ -44,7 +40,7 @@ def get_buttonlike_div(
             "background_color_class": background_color_class,
             "content": SafeString(svg_piece),
             "highlight": highlight_class,
-            "target": target,
+            "target": link_target,
         },
     )
 
@@ -53,20 +49,30 @@ def get_squares(
     *, board: chess.Board, game_display_number: int, selected_square: int | None
 ) -> Iterator[dict[str, SafeString]]:
     legal_moves = list(board.legal_moves) if board.outcome() is None else []
+    movable_pieces = {board.piece_at(m.from_square) for m in legal_moves}
     selected_squares_moves = [m for m in legal_moves if selected_square == m.from_square]
+
     for rank in range(7, -1, -1):
         for file_ in range(8):
             this_square = chess.square(file_, rank)
-            highlight_class = None
-            if (
-                selected_square is not None
-                and rank == chess.square_rank(selected_square)
-                and file_ == chess.square_file(selected_square)
-            ):
-                highlight_class = "highlighted"
-            else:
-                if any(m.to_square == this_square for m in selected_squares_moves):
-                    highlight_class = "potential-target"
+            highlight_class = link_target = None
+
+            if board.piece_at(this_square) in movable_pieces:
+                if this_square != selected_square:
+                    link_target = reverse(
+                        "game",
+                        query=dict(game_display_number=game_display_number, rank=rank, file=file_),
+                    )
+                else:
+                    highlight_class = "highlighted"
+                    link_target = reverse(
+                        "game",
+                        query=dict(game_display_number=game_display_number),
+                    )
+
+            if any(m.to_square == this_square for m in selected_squares_moves):
+                highlight_class = "potential-target"
+
             yield {
                 "button": get_buttonlike_div(
                     board=board,
@@ -74,6 +80,7 @@ def get_squares(
                     file_=file_,
                     game_display_number=game_display_number,
                     highlight_class=highlight_class,
+                    link_target=link_target,
                 )
             }
 
