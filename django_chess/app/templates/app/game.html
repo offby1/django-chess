@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="online chess, Yo">
-    <meta name="keywords" content="chess">
-    <title>Chess, Yo</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="online chess, Yo">
+        <meta name="keywords" content="chess">
+        <title>Chess, Yo</title>
+    </head>
     <body>
         {% if outcome %}
+            <form id="move"
+                  method="post"
+                  name="move"
+                  action="{% url 'move' game_display_number=game_display_number %}">
+                {% csrf_token %}
+            </form>
             <div class="board">
-                {% for s in squares %}<div class="{{ s.class }}">{{ s.button }}</div>{% endfor %}
+                {% for s in squares %}{{ s }}{% endfor %}
             </div>
             Outcome: {{ outcome }}
         {% endif %}
@@ -31,17 +39,17 @@
          aspect-ratio: 1;
          display: grid;
      }
-     .board > div > div.dark {
+     .board > div.dark {
          background-color: darkgrey;
      }
-     .board > div > div.light {
+     .board > div.light {
          background-color: lightgrey;
      }
      .highlighted {
          background-color: lightgreen;
      }
-    .potential-target {
-        background-color: blue;
-    }
+     .potential-target {
+         background-color: blue;
+     }
     </style>
 </html>

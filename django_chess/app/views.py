@@ -1,15 +1,16 @@
 import enum
-from typing import Any, Iterator
+from typing import Any, Iterable, Iterator
 
 import chess
 import chess.svg
 
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
-from django.utils.safestring import SafeString
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import SafeString
 from django.views.decorators.http import require_http_methods
 from django_chess.app.models import Game
 
@@ -22,7 +23,9 @@ class SquareFlavor(enum.Enum):
     NON_MOVEABLE_PIECE = enum.auto()
 
     # has a link that clears the highlight
-    HIGHLIGHTED_PIECE = enum.auto()
+    SELECTED = enum.auto()
+
+    SELECTABLE = enum.auto()
 
     # has no piece on it, but has a button
     MOVE_HERE = enum.auto()
@@ -31,13 +34,24 @@ class SquareFlavor(enum.Enum):
     CAPTURABLE_PIECE = enum.auto()
 
 
-def post_for_move(*args: Any, **kwargs: Any) -> Any:
-    return "TODO"
+def move_button(*, game_display_number: int, from_: chess.Square, to: chess.Square) -> Any:
+    the_move = chess.Move(from_square=from_, to_square=to)
+    label = the_move.uci()
+    url = reverse("move", kwargs=dict(game_display_number=game_display_number))
+    return format_html(
+        """<button type="submit" form="move" name="move" value="{}">Imagine I'll post to {} to move from {} to {}, aka {}</button>""",
+        the_move.uci(),
+        url,
+        from_,
+        to,
+        label,
+    )
 
 
 def html_for_square(
     *,
     board: chess.Board,
+    selected_square: chess.Square | None = None,
     square: chess.Square,
     game_display_number: int,
     flavor: SquareFlavor,
@@ -58,23 +72,52 @@ def html_for_square(
             pass
         case SquareFlavor.NON_MOVEABLE_PIECE:
             pass
-        case SquareFlavor.HIGHLIGHTED_PIECE:
+        case SquareFlavor.SELECTABLE:
+            link_target = reverse(
+                "game",
+                query=dict(
+                    game_display_number=game_display_number,
+                    rank=chess.square_rank(square),
+                    file=chess.square_file(square),
+                ),
+            )
+        case SquareFlavor.SELECTED:
             highlight_class = "highlighted"
-            link_target = reverse("game", query=dict(game_display_number=game_display_number))
-        case SquareFlavor.MOVE_HERE:
+            link_target = reverse(
+                "game",
+                query=dict(game_display_number=game_display_number),
+            )
+        case SquareFlavor.MOVE_HERE | SquareFlavor.CAPTURABLE_PIECE:
             # TODO -- looks like we need to be passed the currently-selected square, so that we can construct the URL to make the move.
-            button_magic = post_for_move(...)
-        case SquareFlavor.CAPTURABLE_PIECE:
-            button_magic = post_for_move(...)
+            assert selected_square is not None
+            button_magic = move_button(
+                game_display_number=game_display_number, from_=selected_square, to=square
+            )
+        case _:
+            assert False, f"I don't know what to do with {flavor=}"
+
+    content = svg_piece
+    assert link_target is None or button_magic is None
+
+    if link_target is not None:
+        content = format_html(
+            """<a href="{}">{}</a>""",
+            SafeString(link_target),
+            SafeString(content),
+        )
+    elif button_magic is not None:
+        content = format_html(
+            """<div>{}</div>""",
+            button_magic,
+        )
 
     return render_to_string(
         "app/buttonlike-div.html",
         context={
             "background_color_class": background_color_class,
-            "button_magic": button_magic,
-            "content": SafeString(svg_piece),
+            "content": SafeString(content),
             "highlight": highlight_class,
-            "target": link_target,
+            "square_flavor": flavor,
         },
     )
 
@@ -103,7 +146,7 @@ def get_squares_none_selected(
             if board.piece_at(this_square) is None:
                 flavor = SquareFlavor.BLANK
             elif selectable:
-                flavor = SquareFlavor.HIGHLIGHTED_PIECE
+                flavor = SquareFlavor.SELECTABLE
             else:
                 flavor = SquareFlavor.NON_MOVEABLE_PIECE
 
@@ -135,30 +178,39 @@ def get_squares_with_selection(
         for file_ in range(8):
             this_square = chess.square(file_, rank)
 
-            if this_square == selected_square:
-                yield_me[this_square] = html_for_square(
+            def p(*, flavor: SquareFlavor) -> str:
+                return html_for_square(
                     board=board,
                     game_display_number=game_display_number,
-                    square=this_square,
-                    flavor=SquareFlavor.HIGHLIGHTED_PIECE,
-                )
-
-            elif holds_movable_piece(this_square):
-                pass  # what's in yield_me is fine
-            elif this_square in selected_squares_destinations:
-                if board.piece_at(this_square) is None:
-                    flavor = SquareFlavor.MOVE_HERE
-                else:
-                    flavor = SquareFlavor.CAPTURABLE_PIECE
-
-                yield_me[this_square] = html_for_square(
-                    board=board,
-                    game_display_number=game_display_number,
+                    selected_square=selected_square,
                     square=this_square,
                     flavor=flavor,
                 )
 
+            if this_square == selected_square:
+                yield_me[this_square] = p(flavor=SquareFlavor.SELECTED)
+
+            elif holds_movable_piece(this_square):
+                pass  # what's in yield_me is fine
+            elif this_square in selected_squares_destinations:
+                yield_me[this_square] = p(
+                    flavor=(
+                        SquareFlavor.MOVE_HERE
+                        if board.piece_at(this_square) is None
+                        else SquareFlavor.CAPTURABLE_PIECE
+                    )
+                )
+
     yield from yield_me.items()
+
+
+def sort_upper_left_first(
+    square_string_tuples: Iterable[tuple[chess.Square, str]],
+) -> Iterable[tuple[chess.Square, str]]:
+    def key(toop: tuple[chess.Square, str]) -> tuple[int, int]:
+        return (-chess.square_rank(toop[0]), chess.square_file(toop[0]))
+
+    return sorted(square_string_tuples, key=key)
 
 
 @require_http_methods(["GET", "POST"])
@@ -194,7 +246,27 @@ def game(request: HttpRequest) -> HttpResponse:
         request,
         "app/game.html",
         context={
+            "game_display_number": game_display_number,
             "outcome": str(board.outcome()),
-            "squares": dict(square_items),
+            "squares": [t[1] for t in sort_upper_left_first(square_items)],
         },
+    )
+
+
+@require_http_methods(["POST"])
+def move(request: HttpRequest, game_display_number: int) -> HttpResponseRedirect:
+    g = get_object_or_404(Game, pk=game_display_number)
+    board = chess.Board()
+    board.set_board_fen(g.board_fen)
+
+    # TODO -- error handling.  What if "move" isn't present?
+    move = chess.Move.from_uci(request.POST["move"])
+
+    # TODO -- check that the move is legal
+    board.push(move)
+    g.board_fen = board.board_fen()
+    g.save()
+
+    return HttpResponseRedirect(
+        reverse("game", query=dict(game_display_number=game_display_number))
     )
