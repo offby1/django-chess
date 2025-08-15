@@ -107,6 +107,14 @@ def game(request: HttpRequest) -> HttpResponse:
     ) is not None:
         selected_square = chess.square(int(file_), int(rank))
 
+    # If no square is selected:
+    # - give each square that has a moveable piece a link that will select that piece.
+    # Otherwise:
+    # - the selected piece is highlighted.
+    # - the selected piece has a link to this view with nothing selected -- i.e., clicking a selected piece clears the selection.
+    # - each legal destination of the selected piece gets a button that does a POST that actually makes the piece move to that destination.
+    # - moveable pieces other than the selected one have the same link they'd have in the "not selected" case.
+
     return TemplateResponse(
         request,
         "app/game.html",
