@@ -31,6 +31,7 @@ ALLOWED_HOSTS: list[str] = []
 # Application definition
 
 INSTALLED_APPS = [
+    "debug_toolbar",
     "django_chess.app",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -49,6 +51,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+INTERNAL_IPS = ["127.0.0.1"]
 
 ROOT_URLCONF = "django_chess.urls"
 
