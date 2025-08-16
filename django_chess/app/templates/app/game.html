@@ -8,55 +8,74 @@
         <title>Chess, Yo</title>
     </head>
     <body>
-        {% if outcome %}
-            Game {{ game_display_number }}'s outcome was {{ outcome }}
-        {% else %}
-            <form id="move"
-                  method="post"
-                  name="move"
-                  action="{% url 'move' game_display_number=game_display_number %}">
-                {% csrf_token %}
-            </form>
-            <div class="board">
-                {% for s in squares %}{{ s }}{% endfor %}
+        <div id="top">
+            {% if outcome %}
+                Game {{ game_display_number }}'s outcome was {{ outcome }}
+            {% else %}
+                <form id="move"
+                      method="post"
+                      name="move"
+                      action="{% url 'move' game_display_number=game_display_number %}">
+                    {% csrf_token %}
+                </form>
+                <div class="board">
+                    {% for s in squares %}{{ s }}{% endfor %}
+                </div>
+            {% endif %}
+            <div id="status-whatnots">
+                <form method="post" action="{% url 'game' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary"
+                            type="submit"
+                            name="action"
+                            value="Make a new game, yo">NEW GAME</button>
+                </form>
+                <div>It's {{ whose_turn }}'s turn</div>
             </div>
-        {% endif %}
-        <form method="post" action="{% url 'game' %}">
-            {% csrf_token %}
-            <button class="btn btn-primary"
-                    type="submit"
-                    name="action"
-                    value="Make a new game, yo">NEW GAME</button>
-        </form>
+        </div>
     </body>
     <style>
-    .board {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-        width: min(90vw, 90vh);
-    }
-    .board > div {
-        border: 1px solid black;
-        aspect-ratio: 1;
-        display: grid;
-    }
-    .board > div > a {
-        display: grid;
-    }
-    .board > div.dark {
-        background-color: darkgrey;
-    }
-    .board > div.light {
-        background-color: lightgrey;
-    }
-    .board > div > div {
-        display: grid;
-    }
-    .highlighted {
-        background-color: lightgreen;
-    }
-    .potential-target {
-        background-color: blue;
-    }
+     div#top {
+         display: flex;
+         flex-direction: column;
+     }
+     div#status-whatnots {
+         display: flex;
+         justify-content: space-between;
+     }
+     div#status-whatnots > div {
+         font-size: x-large;
+         font-weight: bold;
+     }
+     .board {
+         display: grid;
+         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+         width: min(90vw, 90vh);
+         margin: 10px;
+         border: thick black solid;
+     }
+     .board > div {
+         border: 1px solid black;
+         aspect-ratio: 1;
+         display: grid;
+     }
+     .board > div > a {
+         display: grid;
+     }
+     .board > div.dark {
+         background-color: darkgrey;
+     }
+     .board > div.light {
+         background-color: lightgrey;
+     }
+     .board > div > div {
+         display: grid;
+     }
+     .highlighted {
+         background-color: lightgreen;
+     }
+     .potential-target {
+         background-color: blue;
+     }
     </style>
 </html>

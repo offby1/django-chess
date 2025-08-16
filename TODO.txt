@@ -1,5 +1,4 @@
 IN PROGRESS
-* It'd be nice if there were some visual indicator of WHOSE TURN IT IS
 
 TODO
 * I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.
@@ -12,3 +11,4 @@ TODO
 
 DONE
 * Pretty sure I've captured a king, and yet the game never ended -- "Outcome" remained None.
+* It'd be nice if there were some visual indicator of WHOSE TURN IT IS
