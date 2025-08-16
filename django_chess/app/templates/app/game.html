@@ -12,12 +12,14 @@
             {% if outcome %}
                 Game {{ game_display_number }}'s outcome was {{ outcome }}
             {% else %}
-                <form id="move"
-                      method="post"
-                      name="move"
-                      action="{% url 'move' game_display_number=game_display_number %}">
-                    {% csrf_token %}
-                </form>
+                {% if game_display_number %}
+                    <form id="move"
+                          method="post"
+                          name="move"
+                          action="{% url 'move' game_display_number=game_display_number %}">
+                        {% csrf_token %}
+                    </form>
+                {% endif %}
                 <div class="board">
                     {% for s in squares %}{{ s }}{% endfor %}
                 </div>
