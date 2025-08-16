@@ -1,4 +1,5 @@
 import enum
+import json
 from typing import Any, Iterable, Iterator
 
 import chess
@@ -213,21 +214,34 @@ def sort_upper_left_first(
     return sorted(square_string_tuples, key=key)
 
 
+def save_board(*, board: chess.Board, game: Game) -> None:
+    game.moves = json.dumps([m.uci() for m in board.move_stack])
+    game.save()
+
+
+def load_board(*, game: Game) -> chess.Board:
+    board = chess.Board()
+    if game.moves is not None:
+        for m_uci_str in json.loads(game.moves):
+            board.push(chess.Move.from_uci(m_uci_str))
+
+    return board
+
+
 @require_http_methods(["GET", "POST"])
 def game(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        new_game = Game.objects.create(board_fen=chess.Board().board_fen())
+        new_game = Game.objects.create()
         return HttpResponseRedirect(reverse("game", query=dict(game_display_number=new_game.pk)))
 
     if (game_display_number := request.GET.get("game_display_number")) is None:
         return TemplateResponse(request, "app/game.html", context={})
 
-    g = Game.objects.filter(pk=game_display_number).first()
-    if g is None:
+    game = Game.objects.filter(pk=game_display_number).first()
+    if game is None:
         return HttpResponseNotFound()
 
-    board = chess.Board()
-    board.set_board_fen(g.board_fen)
+    board = load_board(game=game)
 
     selected_square = None
     if (rank := request.GET.get("rank")) is not None and (
@@ -236,10 +250,10 @@ def game(request: HttpRequest) -> HttpResponse:
         selected_square = chess.square(int(file_), int(rank))
 
     if selected_square is None:
-        square_items = get_squares_none_selected(board=board, game_display_number=g.pk)
+        square_items = get_squares_none_selected(board=board, game_display_number=game.pk)
     else:
         square_items = get_squares_with_selection(
-            board=board, game_display_number=g.pk, selected_square=selected_square
+            board=board, game_display_number=game.pk, selected_square=selected_square
         )
 
     return TemplateResponse(
@@ -254,18 +268,20 @@ def game(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-def move(request: HttpRequest, game_display_number: int) -> HttpResponseRedirect:
-    g = get_object_or_404(Game, pk=game_display_number)
-    board = chess.Board()
-    board.set_board_fen(g.board_fen)
+def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
+    game = Game.objects.filter(pk=game_display_number).first()
+    if game is None:
+        return HttpResponseNotFound()
+
+    board = load_board(game=game)
 
     # TODO -- error handling.  What if "move" isn't present?
     move = chess.Move.from_uci(request.POST["move"])
 
     # TODO -- check that the move is legal
     board.push(move)
-    g.board_fen = board.board_fen()
-    g.save()
+
+    save_board(board=board, game=game)
 
     return HttpResponseRedirect(
         reverse("game", query=dict(game_display_number=game_display_number))

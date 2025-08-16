@@ -4,4 +4,4 @@ from django.db import models
 
 
 class Game(models.Model):
-    board_fen = models.CharField(max_length=200)
+    moves = models.CharField(null=True)
