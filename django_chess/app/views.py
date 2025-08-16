@@ -1,5 +1,6 @@
 import enum
 import json
+import random
 from typing import Any, Iterable, Iterator
 
 import chess
@@ -299,6 +300,7 @@ def auto_move(request: HttpRequest, game_display_number: int) -> HttpResponse:
     board = load_board(game=game)
 
     legal_moves = list(board.legal_moves)
+    random.shuffle(legal_moves)
     board.push(legal_moves[0])
     save_board(board=board, game=game)
 
