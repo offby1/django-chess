@@ -288,3 +288,20 @@ def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
     return HttpResponseRedirect(
         reverse("game", query=dict(game_display_number=game_display_number))
     )
+
+
+@require_http_methods(["POST"])
+def auto_move(request: HttpRequest, game_display_number: int) -> HttpResponse:
+    game = Game.objects.filter(pk=game_display_number).first()
+    if game is None:
+        return HttpResponseNotFound()
+
+    board = load_board(game=game)
+
+    legal_moves = list(board.legal_moves)
+    board.push(legal_moves[0])
+    save_board(board=board, game=game)
+
+    return HttpResponseRedirect(
+        reverse("game", query=dict(game_display_number=game_display_number))
+    )
