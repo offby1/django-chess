@@ -253,14 +253,19 @@ def game(request: HttpRequest) -> HttpResponse:
             board=board, game_display_number=game.pk, selected_square=selected_square
         )
 
+    context = {
+        "game_display_number": game_display_number,
+        "squares": [t[1] for t in sort_upper_left_first(square_items)],
+        "whose_turn": "white" if board.turn else "black",
+    }
+
+    if (outcome := board.outcome()) is not None:
+        context["outcome"] = str(outcome)
+
     return TemplateResponse(
         request,
         "app/game.html",
-        context={
-            "game_display_number": game_display_number,
-            "outcome": str(board.outcome()),
-            "squares": [t[1] for t in sort_upper_left_first(square_items)],
-        },
+        context=context,
     )
 
 

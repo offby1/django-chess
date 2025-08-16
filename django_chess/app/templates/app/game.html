@@ -9,6 +9,8 @@
     </head>
     <body>
         {% if outcome %}
+            Game {{ game_display_number }}'s outcome was {{ outcome }}
+        {% else %}
             <form id="move"
                   method="post"
                   name="move"
@@ -18,7 +20,6 @@
             <div class="board">
                 {% for s in squares %}{{ s }}{% endfor %}
             </div>
-            Outcome: {{ outcome }}
         {% endif %}
         <form method="post" action="{% url 'game' %}">
             {% csrf_token %}
@@ -29,33 +30,33 @@
         </form>
     </body>
     <style>
-     .board {
-         display: grid;
-         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-         width: min(90vw, 90vh);
-     }
-     .board > div {
-         border: 1px solid black;
-         aspect-ratio: 1;
-         display: grid;
-     }
-     .board > div > a {
-         display: grid;
-     }
-     .board > div.dark {
-         background-color: darkgrey;
-     }
-     .board > div.light {
-         background-color: lightgrey;
-     }
-     .board > div > div {
-         display: grid;
-     }
-     .highlighted {
-         background-color: lightgreen;
-     }
-     .potential-target {
-         background-color: blue;
-     }
+    .board {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        width: min(90vw, 90vh);
+    }
+    .board > div {
+        border: 1px solid black;
+        aspect-ratio: 1;
+        display: grid;
+    }
+    .board > div > a {
+        display: grid;
+    }
+    .board > div.dark {
+        background-color: darkgrey;
+    }
+    .board > div.light {
+        background-color: lightgrey;
+    }
+    .board > div > div {
+        display: grid;
+    }
+    .highlighted {
+        background-color: lightgreen;
+    }
+    .potential-target {
+        background-color: blue;
+    }
     </style>
 </html>

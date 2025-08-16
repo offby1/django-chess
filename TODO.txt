@@ -1,8 +1,14 @@
-* Pretty sure I've captured a king, and yet the game never ended -- "Outcome" remained None.
+IN PROGRESS
+* It'd be nice if there were some visual indicator of WHOSE TURN IT IS
+
+TODO
 * I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.
-* It's be nice if there were some visual indicator of WHOSE TURN IT IS
 * Sometimes it lets me click on a piece, and it highlights; but there are no legal moves.  WTF? I can't remember exactly how I got into this situation; I think I had the king in check and had cliked on some random faraway pawn.  It's not surprising that it has no legal moves, since the only legal moves are either "move the king out of danger" or "capture the piece that's endangering the king".
 
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 * When we capture a piece, display something to tell us "yo, you just captured the knight/pawn/whatever".
 * Don't force people to play both black *and* white; instead, when it's black's turn, have a button that says "do a black move" or something, that picks a black move and makes it.
+* How about listing the existing games, and letting me see them via a single click?  Right now I have to manually type in a URL like `http://localhost:8000/game/?game_display_number=3`
+
+DONE
+* Pretty sure I've captured a king, and yet the game never ended -- "Outcome" remained None.
