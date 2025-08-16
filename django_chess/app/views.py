@@ -38,13 +38,10 @@ class SquareFlavor(enum.Enum):
 def move_button(*, game_display_number: int, from_: chess.Square, to: chess.Square) -> Any:
     the_move = chess.Move(from_square=from_, to_square=to)
     label = the_move.uci()
-    url = reverse("move", kwargs=dict(game_display_number=game_display_number))
+
     return format_html(
-        """<button type="submit" form="move" name="move" value="{}">Imagine I'll post to {} to move from {} to {}, aka {}</button>""",
+        """<button type="submit" form="move" name="move" value="{}">{}</button>""",
         the_move.uci(),
-        url,
-        from_,
-        to,
         label,
     )
 
