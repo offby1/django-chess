@@ -22,10 +22,10 @@
                         </form>
                     {% endif %}
                 {% endif %}
-                <div class="board">
-                    {% for s in squares %}{{ s }}{% endfor %}
-                </div>
             {% endif %}
+            <div class="board">
+                {% for s in squares %}{{ s }}{% endfor %}
+            </div>
             <div id="status-whatnots">
                 <form method="post" action="{% url 'game' %}">
                     {% csrf_token %}
