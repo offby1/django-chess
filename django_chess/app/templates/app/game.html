@@ -37,11 +37,13 @@
                 {% if whose_turn == "white" %}
                     <div>It's {{ whose_turn }}'s turn</div>
                 {% else %}
-                    <form method="post"
-                          action="{% url 'auto-move' game_display_number=game_display_number %}">
-                        {% csrf_token %}
-                        <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
-                    </form>
+                    {% if not outcome %}
+                        <form method="post"
+                              action="{% url 'auto-move' game_display_number=game_display_number %}">
+                            {% csrf_token %}
+                            <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
             <script async src="https://js.stripe.com/v3/buy-button.js"></script>
