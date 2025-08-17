@@ -240,11 +240,15 @@ def promoting_push(board: chess.Board, move: chess.Move) -> None:
 
 def load_board(*, game: Game) -> chess.Board:
     board = chess.Board()
+    sans = []
 
     if game.moves is not None:
         for m_uci_str in json.loads(game.moves):
-            promoting_push(board, chess.Move.from_uci(m_uci_str))
+            move = chess.Move.from_uci(m_uci_str)
+            sans.append(board.san(move))
+            promoting_push(board, move)
 
+    setattr(board, "sans", sans)
     return board
 
 
@@ -278,6 +282,7 @@ def game(request: HttpRequest) -> HttpResponse:
 
     context = {
         "board": board,
+        "event_log": board.sans,
         "game_display_number": game_display_number,
         "squares": [t[1] for t in sort_upper_left_first(square_items)],
         "whose_turn": "white" if board.turn else "black",
