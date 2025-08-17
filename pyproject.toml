@@ -14,6 +14,7 @@ dev = [
     "django-debug-toolbar>=6.0.0",
     "django-stubs[compatible-mypy]>=5.2.2",
     "mypy>=1.17.1",
+    "pytest-django>=4.11.1",
 ]
 
 [tool.mypy]
@@ -21,3 +22,6 @@ plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
 django_settings_module = "django_chess.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_chess.settings"

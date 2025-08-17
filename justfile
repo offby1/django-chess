@@ -7,7 +7,10 @@ mypy: uv-install
 main: mypy
     uv run python main.py
 
-runme: mypy
+test: mypy
+    uv run pytest .
+
+runme: test
     uv run python manage.py makemigrations
     uv run python manage.py migrate
     uv run python manage.py runserver
