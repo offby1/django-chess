@@ -1,26 +1,31 @@
 import random
 
 import chess
+import chess.engine
 
 
 def main() -> None:
-    board = chess.Board()
-    while True:
-        outcome = board.outcome()
-        if outcome is not None:
-            print()
-            print(outcome)
-            break
+    GNUCHESS_PATH = "gnuchess"
 
-        legal_moves = list(board.legal_moves)
-        if not legal_moves:
-            break
-        random.shuffle(legal_moves)
-        board.push(legal_moves[0])
-        print(f"{legal_moves[0]}:")
-        print(board.board_fen())
-        print(board)
-        print()
+    board = chess.Board()
+
+    with chess.engine.SimpleEngine.popen_uci([GNUCHESS_PATH, "--uci"]) as engine:
+        while not board.is_game_over():
+            print(board)
+            print("FEN:", board.fen())
+
+            # Get engine move
+            result = engine.play(board, chess.engine.Limit(time=1.0))
+            print("Engine plays:", result.move)
+
+            # Apply engine move
+            if result.move is not None:
+                board.push(result.move)
+
+            if board.is_game_over():
+                break
+
+        print("Game over:", board.result())
 
 
 if __name__ == "__main__":
