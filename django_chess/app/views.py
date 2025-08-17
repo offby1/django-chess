@@ -7,7 +7,13 @@ import chess
 import chess.engine
 import chess.svg
 
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseServerError,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+)
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
@@ -16,6 +22,8 @@ from django.utils.html import format_html
 from django.utils.safestring import SafeString
 from django.views.decorators.http import require_http_methods
 from django_chess.app.models import Game
+
+GNUCHESS_EXECUTABLE = "/home/erichanchrow/.local/bin/gnuchess"
 
 
 class SquareFlavor(enum.Enum):
@@ -135,7 +143,7 @@ def html_for_square(
 def get_squares_none_selected(
     *, board: chess.Board, game_display_number: int
 ) -> Iterator[tuple[chess.Square, str]]:
-    legal_moves = list(board.legal_moves) if board.outcome() is None else []
+    legal_moves = list(board.legal_moves) if board.legal_moves else []
     movable_pieces = {board.piece_at(m.from_square) for m in legal_moves}
 
     for rank in range(7, -1, -1):
@@ -166,7 +174,7 @@ def get_squares_with_selection(
 ) -> Iterator[tuple[chess.Square, str]]:
     yield_me = dict(get_squares_none_selected(board=board, game_display_number=game_display_number))
 
-    legal_moves = list(board.legal_moves) if board.outcome() is None else []
+    legal_moves = list(board.legal_moves) if board.legal_moves else []
 
     def holds_movable_piece(sq: chess.Square) -> bool:
         return sq in {m.from_square for m in legal_moves}
@@ -218,11 +226,24 @@ def save_board(*, board: chess.Board, game: Game) -> None:
     game.save()
 
 
+def promoting_push(board: chess.Board, move: chess.Move) -> None:
+    # unfortunately this is effectively a copy of some code in Board.is_pseudo_legal
+    piece = board.piece_type_at(move.from_square)
+
+    if piece == chess.PAWN and (
+        (board.turn == chess.WHITE and chess.square_rank(move.to_square) == 7)
+        or (board.turn == chess.BLACK and chess.square_rank(move.to_square) == 0)
+    ):
+        move.promotion = chess.QUEEN
+    board.push(move)
+
+
 def load_board(*, game: Game) -> chess.Board:
     board = chess.Board()
+
     if game.moves is not None:
         for m_uci_str in json.loads(game.moves):
-            board.push(chess.Move.from_uci(m_uci_str))
+            promoting_push(board, chess.Move.from_uci(m_uci_str))
 
     return board
 
@@ -256,6 +277,7 @@ def game(request: HttpRequest) -> HttpResponse:
         )
 
     context = {
+        "board": board,
         "game_display_number": game_display_number,
         "squares": [t[1] for t in sort_upper_left_first(square_items)],
         "whose_turn": "white" if board.turn else "black",
@@ -283,9 +305,16 @@ def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
     move = chess.Move.from_uci(request.POST["move"])
 
     # TODO -- check that the move is legal
-    board.push(move)
+    promoting_push(board, move)
 
     save_board(board=board, game=game)
+
+    with chess.engine.SimpleEngine.popen_uci([GNUCHESS_EXECUTABLE, "--uci"]) as engine:
+        result = engine.play(board, chess.engine.Limit(time=0.01))
+
+        if result.move is not None:
+            promoting_push(board, result.move)
+            save_board(board=board, game=game)
 
     return HttpResponseRedirect(
         reverse("game", query=dict(game_display_number=game_display_number))
@@ -301,11 +330,11 @@ def auto_move(request: HttpRequest, game_display_number: int) -> HttpResponse:
     board = load_board(game=game)
 
     # TODO -- start the engine when the server starts, as opposed to every single time we want it to move
-    with chess.engine.SimpleEngine.popen_uci(["gnuchess", "--uci"]) as engine:
+    with chess.engine.SimpleEngine.popen_uci([GNUCHESS_EXECUTABLE, "--uci"]) as engine:
         result = engine.play(board, chess.engine.Limit(time=1.0))
 
         if result.move is not None:
-            board.push(result.move)
+            promoting_push(board, result.move)
             save_board(board=board, game=game)
 
     return HttpResponseRedirect(

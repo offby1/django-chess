@@ -11,11 +11,12 @@ def main() -> None:
 
     with chess.engine.SimpleEngine.popen_uci([GNUCHESS_PATH, "--uci"]) as engine:
         while not board.is_game_over():
+            print()
+            print(f"{len(board.piece_map())} pieces")
             print(board)
-            print("FEN:", board.fen())
 
             # Get engine move
-            result = engine.play(board, chess.engine.Limit(time=1.0))
+            result = engine.play(board, chess.engine.Limit(time=0.1))
             print("Engine plays:", result.move)
 
             # Apply engine move
@@ -25,7 +26,7 @@ def main() -> None:
             if board.is_game_over():
                 break
 
-        print("Game over:", board.result())
+        print("Game over:", board.result(), board.outcome())
 
 
 if __name__ == "__main__":

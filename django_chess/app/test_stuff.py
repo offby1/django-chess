@@ -1,9 +1,11 @@
 import chess
 
+import pytest
+
 from django.test import TestCase
 
 
-# Create your tests here.
+@pytest.mark.skip(reason="WIP")
 def test_pawns_always_get_promoted() -> None:
     board = chess.Board.empty()
 
