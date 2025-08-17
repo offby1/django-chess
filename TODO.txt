@@ -1,11 +1,14 @@
 IN PROGRESS
 
 TODO
+* Display status messages:
+  - when someone captures a piece, display something to tell us "yo, you just captured the knight/pawn/whatever"
+  - when we're in check, say so
+  - when we get checkmated, draw the board, as opposed to just showing the "why the game is over" message
 * I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.
 * Sometimes it lets me click on a piece, and it highlights; but there are no legal moves.  WTF? I can't remember exactly how I got into this situation; I think I had the king in check and had cliked on some random faraway pawn.  It's not surprising that it has no legal moves, since the only legal moves are either "move the king out of danger" or "capture the piece that's endangering the king".
 
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
-* When we capture a piece, display something to tell us "yo, you just captured the knight/pawn/whatever".
 * How about listing the existing games, and letting me see them via a single click?  Right now I have to manually type in a URL like `http://localhost:8000/game/?game_display_number=3`
 * Maybe I should, I dunno, teach Black a better strategy than "pick a legal play at random"
 
