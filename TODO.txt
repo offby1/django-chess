@@ -1,10 +1,13 @@
 IN PROGRESS
 
 TODO
-* Display status messages:
+* Try eliminating the "Play a move for Black" button, and just have Black always play after White has played.
+  Better yet: have a toggle switch for each side, controlling wither gnuchess plays for that side.
+* Display a scrolling panel of messages:
+  - Each move made
   - when someone captures a piece, display something to tell us "yo, you just captured the knight/pawn/whatever"
   - when we're in check, say so
-  - when we get checkmated, draw the board, as opposed to just showing the "why the game is over" message
+* When we get checkmated, draw the board, as opposed to just showing the "why the game is over" message
 * I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.
 * Sometimes it lets me click on a piece, and it highlights; but there are no legal moves.  WTF? I can't remember exactly how I got into this situation; I think I had the king in check and had cliked on some random faraway pawn.  It's not surprising that it has no legal moves, since the only legal moves are either "move the king out of danger" or "capture the piece that's endangering the king".
 
