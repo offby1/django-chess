@@ -34,15 +34,17 @@
                             name="action"
                             value="Make a new game, yo">NEW GAME</button>
                 </form>
-                {% if whose_turn == "white" %}
-                    <div>It's {{ whose_turn }}'s turn</div>
-                {% else %}
-                    {% if not outcome %}
-                        <form method="post"
-                              action="{% url 'auto-move' game_display_number=game_display_number %}">
-                            {% csrf_token %}
-                            <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
-                        </form>
+                {% if not outcome %}
+                    {% if whose_turn == "white" %}
+                        <div>It's {{ whose_turn }}'s turn</div>
+                    {% else %}
+                        {% if game_display_number %}
+                            <form method="post"
+                                  action="{% url 'auto-move' game_display_number=game_display_number %}">
+                                {% csrf_token %}
+                                <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
+                            </form>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
