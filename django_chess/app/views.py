@@ -4,6 +4,7 @@ import random
 from typing import Any, Iterable, Iterator
 
 import chess
+import chess.engine
 import chess.svg
 
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
@@ -299,10 +300,13 @@ def auto_move(request: HttpRequest, game_display_number: int) -> HttpResponse:
 
     board = load_board(game=game)
 
-    legal_moves = list(board.legal_moves)
-    random.shuffle(legal_moves)
-    board.push(legal_moves[0])
-    save_board(board=board, game=game)
+    # TODO -- start the engine when the server starts, as opposed to every single time we want it to move
+    with chess.engine.SimpleEngine.popen_uci(["gnuchess", "--uci"]) as engine:
+        result = engine.play(board, chess.engine.Limit(time=1.0))
+
+        if result.move is not None:
+            board.push(result.move)
+            save_board(board=board, game=game)
 
     return HttpResponseRedirect(
         reverse("game", query=dict(game_display_number=game_display_number))
