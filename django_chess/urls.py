@@ -8,7 +8,7 @@ from django_chess.app import views
 urlpatterns = [
     path("", lambda request: HttpResponseRedirect(reverse("game"))),
     path("admin/", admin.site.urls),
-    path("auto-move/<int:game_display_number>/", views.auto_move, name="auto-move"),
     path("game/", views.game, name="game"),
     path("move/<int:game_display_number>/", views.move, name="move"),
+    path("set-think-time/<int:game_display_number>/", views.set_think_time, name="set-think-time"),
 ] + debug_toolbar_urls()

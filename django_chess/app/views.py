@@ -283,7 +283,7 @@ def game(request: HttpRequest) -> HttpResponse:
     context = {
         "board": board,
         "event_log": getattr(board, "sans", []),
-        "game_display_number": game_display_number,
+        "game": game,
         "squares": [t[1] for t in sort_upper_left_first(square_items)],
         "whose_turn": "white" if board.turn else "black",
     }
@@ -314,12 +314,15 @@ def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
 
     save_board(board=board, game=game)
 
-    with chess.engine.SimpleEngine.popen_uci([GNUCHESS_EXECUTABLE, "--uci"]) as engine:
-        result = engine.play(board, chess.engine.Limit(time=0.01))
+    if game.computer_think_time_ms > 0:
+        with chess.engine.SimpleEngine.popen_uci([GNUCHESS_EXECUTABLE, "--uci"]) as engine:
+            result = engine.play(
+                board, chess.engine.Limit(time=game.computer_think_time_ms / 1_000)
+            )
 
-        if result.move is not None:
-            promoting_push(board, result.move)
-            save_board(board=board, game=game)
+            if result.move is not None:
+                promoting_push(board, result.move)
+                save_board(board=board, game=game)
 
     return HttpResponseRedirect(
         reverse("game", query=dict(game_display_number=game_display_number))
@@ -327,20 +330,10 @@ def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-def auto_move(request: HttpRequest, game_display_number: int) -> HttpResponse:
-    game = Game.objects.filter(pk=game_display_number).first()
-    if game is None:
-        return HttpResponseNotFound()
-
-    board = load_board(game=game)
-
-    # TODO -- start the engine when the server starts, as opposed to every single time we want it to move
-    with chess.engine.SimpleEngine.popen_uci([GNUCHESS_EXECUTABLE, "--uci"]) as engine:
-        result = engine.play(board, chess.engine.Limit(time=1.0))
-
-        if result.move is not None:
-            promoting_push(board, result.move)
-            save_board(board=board, game=game)
+def set_think_time(request: HttpRequest, game_display_number: int) -> HttpResponse:
+    game = get_object_or_404(Game, pk=game_display_number)
+    game.computer_think_time_ms = request.POST["gnuchess-timelimit-ms"]
+    game.save()
 
     return HttpResponseRedirect(
         reverse("game", query=dict(game_display_number=game_display_number))

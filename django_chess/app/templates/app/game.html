@@ -10,17 +10,16 @@
     <body>
         <div id="top">
             {% if outcome %}
-                Game {{ game_display_number }}'s outcome was {{ outcome }}
-            {% else %}
+                Game {{ game.pk }}'s outcome was {{ outcome }}
+            {% elif game %}
+                Computer will think for {{ game.computer_think_time_ms }} milliseconds
                 {% if whose_turn == "white" %}
-                    {% if game_display_number %}
-                        <form id="move"
-                              method="post"
-                              name="move"
-                              action="{% url 'move' game_display_number=game_display_number %}">
-                            {% csrf_token %}
-                        </form>
-                    {% endif %}
+                    <form id="move"
+                          method="post"
+                          name="move"
+                          action="{% url 'move' game_display_number=game.pk %}">
+                        {% csrf_token %}
+                    </form>
                 {% endif %}
             {% endif %}
             <div id="board-plus-eventlog">
@@ -42,17 +41,17 @@
                             name="action"
                             value="Make a new game, yo">NEW GAME</button>
                 </form>
-                {% if not outcome %}
-                    {% if whose_turn == "white" %}
+                {% if game %}
+                    {% if not outcome %}
+                        <form method="post"
+                              action="{% url 'set-think-time' game_display_number=game.pk %}">
+                            {% csrf_token %}
+                            <label>
+                                Computer think time, in milliseconds
+                                <input type="number" name="gnuchess-timelimit-ms" min="0" max="10000" />
+                            </label>
+                        </form>
                         <div>It's {{ whose_turn }}'s turn</div>
-                    {% else %}
-                        {% if game_display_number %}
-                            <form method="post"
-                                  action="{% url 'auto-move' game_display_number=game_display_number %}">
-                                {% csrf_token %}
-                                <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
-                            </form>
-                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
