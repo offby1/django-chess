@@ -83,8 +83,8 @@ def html_for_square(
         case SquareFlavor.SELECTABLE:
             link_target = reverse(
                 "game",
+                kwargs=dict(game_display_number=game_display_number),
                 query=dict(
-                    game_display_number=game_display_number,
                     rank=chess.square_rank(square),
                     file=chess.square_file(square),
                 ),
@@ -93,7 +93,7 @@ def html_for_square(
             highlight_class = "highlighted"
             link_target = reverse(
                 "game",
-                query=dict(game_display_number=game_display_number),
+                kwargs=dict(game_display_number=game_display_number),
             )
         case SquareFlavor.MOVE_HERE | SquareFlavor.CAPTURABLE_PIECE:
             # TODO -- looks like we need to be passed the currently-selected square, so that we can construct the URL to make the move.
@@ -252,15 +252,14 @@ def load_board(*, game: Game) -> chess.Board:
     return board
 
 
-@require_http_methods(["GET", "POST"])
-def game(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        new_game = Game.objects.create()
-        return HttpResponseRedirect(reverse("game", query=dict(game_display_number=new_game.pk)))
+@require_http_methods(["POST"])
+def new_game(request: HttpRequest) -> HttpResponse:
+    new_game = Game.objects.create()
+    return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
 
-    if (game_display_number := request.GET.get("game_display_number")) is None:
-        return TemplateResponse(request, "app/game.html", context={})
 
+@require_http_methods(["GET"])
+def game(request: HttpRequest, game_display_number: int) -> HttpResponse:
     game = Game.objects.filter(pk=game_display_number).first()
     if game is None:
         return HttpResponseNotFound()
@@ -322,7 +321,7 @@ def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
             save_board(board=board, game=game)
 
     return HttpResponseRedirect(
-        reverse("game", query=dict(game_display_number=game_display_number))
+        reverse("game", kwargs=dict(game_display_number=game_display_number))
     )
 
 
@@ -343,5 +342,5 @@ def auto_move(request: HttpRequest, game_display_number: int) -> HttpResponse:
             save_board(board=board, game=game)
 
     return HttpResponseRedirect(
-        reverse("game", query=dict(game_display_number=game_display_number))
+        reverse("game", kwargs=dict(game_display_number=game_display_number))
     )

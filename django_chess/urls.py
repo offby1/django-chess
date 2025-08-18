@@ -9,6 +9,7 @@ urlpatterns = [
     path("", lambda request: HttpResponseRedirect(reverse("game"))),
     path("admin/", admin.site.urls),
     path("auto-move/<int:game_display_number>/", views.auto_move, name="auto-move"),
-    path("game/", views.game, name="game"),
+    path("game/", views.new_game, name="new-game"),
+    path("game/<int:game_display_number>/", views.game, name="game"),
     path("move/<int:game_display_number>/", views.move, name="move"),
 ] + debug_toolbar_urls()
