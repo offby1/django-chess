@@ -36,8 +36,10 @@ ensure-django-secret:
 dcu: test ensure-django-secret
     set -euo pipefail
 
-    export GIT_VERSION=TODO
-    export DJANGO_SETTINGS_MODULE=django_chess.settings # TODO -- distinguish between prod and test &c
+    export CADDY_HOSTNAME=chess.offby1.info
     export DJANGO_SECRET_KEY=$(cat "${DJANGO_SECRET_FILE}")
+    export DJANGO_SETTINGS_MODULE=django_chess.settings # TODO -- distinguish between prod and test &c
+    export GIT_VERSION=TODO
 
-    docker compose --profile prod up --build
+    docker compose --profile prod up --build --detach
+    docker compose logs django --follow
