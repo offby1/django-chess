@@ -1,0 +1,32 @@
+include:
+  - docker-compose-caddy.yaml
+
+volumes:
+  sqlite_data:
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      labels:
+         info.offby1.chess.git-version: ${GIT_VERSION:-}
+
+    environment:
+      DJANGO_SECRET_FILE: /run/secrets/django_secret
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-}
+      DOCKER_CONTEXT: ${DOCKER_CONTEXT:-} # so each machine "knows" where it is -- orbstack, hetz, ls, &c
+
+    ports:
+      - "127.0.0.1:8000:8000"
+    secrets:
+      - django_secret
+    init: true                  # https://docs.docker.com/reference/compose-file/services/#init
+
+    labels:
+      caddy: ${CADDY_HOSTNAME:-}
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+
+secrets:
+  django_secret:
+    environment: "DJANGO_SECRET_KEY"
