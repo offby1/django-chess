@@ -1,5 +1,9 @@
 FROM python:3.13-slim-bullseye AS python
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+RUN apt -y update
+RUN apt -y install gnuchess
+
 ENV PYTHONUNBUFFERED=t
 
 RUN adduser --disabled-password chess

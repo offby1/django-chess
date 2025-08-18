@@ -41,5 +41,9 @@ dcu: test ensure-django-secret
     export DJANGO_SETTINGS_MODULE=django_chess.settings # TODO -- distinguish between prod and test &c
     export GIT_VERSION=TODO
 
-    docker compose --profile prod up --build --detach
+    # TODO -- infer compose profile from docker context.
+    # e.g. if the context is "default", then we don't want "prod";
+    # but if it's "chess", then we do.
+    # docker compose --profile prod up --build --detach
+      docker compose                up --build --detach
     docker compose logs django --follow

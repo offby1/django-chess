@@ -23,7 +23,8 @@ from django.utils.safestring import SafeString
 from django.views.decorators.http import require_http_methods
 from django_chess.app.models import Game
 
-GNUCHESS_EXECUTABLE = "/home/erichanchrow/.local/bin/gnuchess"
+# TODO -- this works on Debian 12 ("bookworm") but not necessarily other distros, such as MacOS
+GNUCHESS_EXECUTABLE = "/usr/games/gnuchess"
 
 
 class SquareFlavor(enum.Enum):
