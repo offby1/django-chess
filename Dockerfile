@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED=t
 
 RUN adduser --disabled-password chess
 
-COPY uv.lock pyproject.toml manage.py /chess/
+COPY uv.lock pyproject.toml manage.py start-daphne.sh /chess/
 COPY django_chess/ /chess/django_chess/
 
 WORKDIR /chess
@@ -15,5 +15,5 @@ RUN ["uv", "sync"]
 
 RUN ["uv", "run", "python", "manage.py", "makemigrations"]
 RUN ["uv", "run", "python", "manage.py", "migrate"]
-# TODO -- use a proper server; ensure DEBUG is False
-CMD ["uv", "run", "python", "manage.py", "runserver"]
+# TODO -- ensure DEBUG is False
+CMD ["bash", "./start-daphne.sh"]

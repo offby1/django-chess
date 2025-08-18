@@ -40,4 +40,4 @@ dcu: test ensure-django-secret
     export DJANGO_SETTINGS_MODULE=django_chess.settings # TODO -- distinguish between prod and test &c
     export DJANGO_SECRET_KEY=$(cat "${DJANGO_SECRET_FILE}")
 
-    docker compose up --build
+    docker compose --profile prod up --build
