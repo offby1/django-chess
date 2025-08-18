@@ -7,7 +7,7 @@ until I stumbled upon a game where a pawn got promoted.
 
 import chess
 
-from django_chess.app.views import promoting_push
+from django_chess.app.utils import promoting_push
 
 move_uci_strings_black = [
     "b1c3",

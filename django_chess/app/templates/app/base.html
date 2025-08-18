@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="online chess, Yo">
+        <meta name="keywords" content="chess">
+        <title>Chess, Yo</title>
+    </head>
+    <title>
+        {% block title %}
+            Chess
+        {% endblock title %}
+    </title>
+    <body>
+        <div id="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+    <style>
+     div#make-that-button-bigger {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         form > button {
+             font-size: xx-large;
+         }
+     }
+
+     div#top {
+         display: flex;
+         flex-direction: column;
+     }
+     div#status-whatnots {
+         display: flex;
+         justify-content: space-between;
+     }
+     div#status-whatnots > div {
+         font-size: x-large;
+         font-weight: bold;
+     }
+     div#board-plus-eventlog {
+         display: flex;
+         flex-wrap: wrap;
+     }
+     div#event-log {
+         border: 1px solid;
+         font-family: monospace;
+         font-size: xx-large;
+         height: min(90vw, 90vh);;
+         overflow: scroll;
+         div {
+             border-bottom: 1px dashed;
+         }
+         /* White always makes the first move */
+         div:nth-of-type(odd) {
+             background-color: #eee;
+         }
+         div:nth-of-type(even) {
+             background-color: #666666;
+         }
+     }
+     .board {
+         display: grid;
+         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+         width: min(90vw, 90vh);
+         margin: 10px;
+         border: thick black solid;
+     }
+     .board > div {
+         border: 1px solid black;
+         aspect-ratio: 1;
+         display: grid;
+     }
+     .board > div > a {
+         display: grid;
+     }
+     .board > div.dark {
+         background-color: darkgrey;
+     }
+     .board > div.light {
+         background-color: lightgrey;
+     }
+     .board > div > div {
+         display: grid;
+     }
+     .highlighted {
+         background-color: lightgreen;
+     }
+     .potential-target {
+         background-color: blue;
+     }
+    </style>
+</html>
