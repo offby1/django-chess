@@ -1,6 +1,4 @@
 IN PROGRESS
-* I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.
-  I've got code for this, but haven't figured out how to test it.
 
 TODO
 * Maybe switch to UUIDs for primary keys -- that way when you create a new game, nobody but you knows the URL for it, and you needn't worry about people coming along and playing for you.
@@ -12,6 +10,7 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.
 * When we get checkmated, draw the board, as opposed to just showing the "why the game is over" message
 * Try eliminating the "Play a move for Black" button, and just have Black always play after White has played.
 * Pretty sure I've captured a king, and yet the game never ended -- "Outcome" remained None.

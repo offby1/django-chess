@@ -282,7 +282,7 @@ def game(request: HttpRequest) -> HttpResponse:
 
     context = {
         "board": board,
-        "event_log": board.sans,
+        "event_log": getattr(board, "sans", []),
         "game_display_number": game_display_number,
         "squares": [t[1] for t in sort_upper_left_first(square_items)],
         "whose_turn": "white" if board.turn else "black",
