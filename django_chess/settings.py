@@ -26,6 +26,7 @@ SECRET_KEY = "django-insecure-n@$m1igrmsb5tt#y$@p+lm=l3bfgc^#hgc85g8&$(i#lfirk=(
 DEBUG = True
 
 ALLOWED_HOSTS: list[str] = [
+    "chess.offby1.info",
     "localhost",
     "penguin.tail571dc2.ts.net",
 ]

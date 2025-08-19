@@ -32,7 +32,8 @@ from django_chess.app.utils import (
     sort_upper_left_first,
 )
 
-GNUCHESS_EXECUTABLE = "/home/erichanchrow/.local/bin/gnuchess"
+# TODO -- this works on Debian 12 ("bookworm") but not necessarily other distros, such as MacOS
+GNUCHESS_EXECUTABLE = "/usr/games/gnuchess"
 
 
 # If no square is selected:
