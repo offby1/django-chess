@@ -44,3 +44,6 @@ dcu: test ensure-django-secret
 
     docker compose                up --build --detach
     docker compose logs django --follow
+
+prod:
+    DOCKER_CONTEXT=chess just dcu
