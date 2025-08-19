@@ -51,16 +51,14 @@ def html_for_square(
     flavor: SquareFlavor,
 ) -> SafeString:
     piece = board.piece_map().get(square, None)
-    background_color_class = (
-        "light" if (chess.square_rank(square) - chess.square_file(square)) % 2 else "dark"
-    )
+    css_class = "light" if (chess.square_rank(square) - chess.square_file(square)) % 2 else "dark"
 
     svg_piece = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45 45"></svg>"""
 
     if piece is not None:
         svg_piece = chess.svg.piece(piece)
 
-    highlight_class = link_target = button_magic = None
+    link_target = button_magic = None
     match flavor:
         case SquareFlavor.BLANK:
             pass
@@ -76,7 +74,7 @@ def html_for_square(
                 ),
             )
         case SquareFlavor.SELECTED:
-            highlight_class = "highlighted"
+            css_class = "highlighted"
             link_target = reverse(
                 "game",
                 kwargs=dict(game_display_number=game_display_number),
@@ -108,9 +106,8 @@ def html_for_square(
     return render_to_string(
         "app/buttonlike-div.html",
         context={
-            "background_color_class": background_color_class,
             "content": SafeString(content),
-            "highlight": highlight_class,
+            "css_class": css_class,
             "square_flavor": flavor,
         },
     )
