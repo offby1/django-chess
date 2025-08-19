@@ -48,7 +48,11 @@ GNUCHESS_EXECUTABLE = "/usr/games/gnuchess"
 
 @require_http_methods(["GET"])
 def home(request: HttpRequest) -> HttpResponse:
-    return TemplateResponse(request, "app/home.html", context={})
+    return TemplateResponse(
+        request,
+        "app/home.html",
+        context={"num_games": Game.objects.count()},
+    )
 
 
 @require_http_methods(["POST"])
