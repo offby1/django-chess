@@ -22,7 +22,7 @@ dev = [
 plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
-django_settings_module = "django_chess.settings"
+django_settings_module = "django_chess.dev_settings"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "django_chess.settings"
+DJANGO_SETTINGS_MODULE = "django_chess.dev_settings"

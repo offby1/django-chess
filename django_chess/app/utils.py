@@ -80,7 +80,6 @@ def html_for_square(
                 kwargs=dict(game_display_number=game_display_number),
             )
         case SquareFlavor.MOVE_HERE | SquareFlavor.CAPTURABLE_PIECE:
-            # TODO -- looks like we need to be passed the currently-selected square, so that we can construct the URL to make the move.
             assert selected_square is not None
             button_magic = move_button(
                 game_display_number=game_display_number, from_=selected_square, to=square

@@ -3,6 +3,7 @@ set unstable
 export COMPOSE_PROFILE := if env("DOCKER_CONTEXT", "") == "chess" { "prod" } else { "" }
 DJANGO_SECRET_DIRECTORY := config_directory() / "info.offby1.chess"
 export DJANGO_SECRET_FILE := DJANGO_SECRET_DIRECTORY / "django_secret_key"
+export DJANGO_SETTINGS_MODULE := env("DJANGO_SETTINGS_MODULE", "django_chess.dev_settings")
 
 uv-install:
     uv sync
@@ -39,11 +40,13 @@ dcu: test ensure-django-secret
 
     export CADDY_HOSTNAME=chess.offby1.info
     export DJANGO_SECRET_KEY=$(cat "${DJANGO_SECRET_FILE}")
-    export DJANGO_SETTINGS_MODULE=django_chess.settings # TODO -- distinguish between prod and test &c
     export GIT_VERSION=TODO
+
+    echo COMPOSE_PROFILE is {{ COMPOSE_PROFILE }}
 
     docker compose                up --build --detach
     docker compose logs django --follow
 
 prod:
+    export DJANGO_SETTINGS_MODULE=django_chess.prod_settings
     DOCKER_CONTEXT=chess just dcu

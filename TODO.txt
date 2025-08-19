@@ -1,6 +1,7 @@
 IN PROGRESS
 
 TODO
+* I suspect I'm not actually preserving the database between prod deploys.
 * If the last move put someone in check, note that somewhere!
 * Automatically scroll the "moves" list to the end after the page loads.
 * Maybe switch to UUIDs for primary keys -- that way when you create a new game, nobody but you knows the URL for it, and you needn't worry about people coming along and playing for you.

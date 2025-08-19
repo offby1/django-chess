@@ -19,5 +19,5 @@ RUN ["uv", "sync"]
 
 RUN ["uv", "run", "python", "manage.py", "makemigrations"]
 RUN ["uv", "run", "python", "manage.py", "migrate"]
-# TODO -- ensure DEBUG is False
+
 CMD ["bash", "./start-daphne.sh"]
