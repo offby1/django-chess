@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,7 +37,6 @@ CSRF_TRUSTED_ORIGINS = ["https://*.tail571dc2.ts.net"]
 # Application definition
 
 INSTALLED_APPS = [
-    "debug_toolbar",
     "django_chess.app",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -47,7 +47,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -76,16 +75,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "django_chess.wsgi.application"
-
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+SQLITE_DATA_DIR = Path(os.environ.get("SQLITE_DATA_DIR", BASE_DIR))
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": SQLITE_DATA_DIR / "db.sqlite3",
     }
 }
 

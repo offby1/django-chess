@@ -1,0 +1,6 @@
+# Python-generated files
+**/__pycache__/
+
+.venv
+/db.sqlite3
+/.dmypy.json
