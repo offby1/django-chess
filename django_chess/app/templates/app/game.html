@@ -1,11 +1,11 @@
 {% extends "app/base.html" %}
 {% block title %}
     Game {{ game.pk }}
-    {% if outcome %}'s outcome was {{ outcome }}{% endif %}
-    {% if not outcome %}Computer will think for {{ game.computer_think_time_ms }} milliseconds{% endif %}
 {% endblock title %}
 {% block content %}
     <div id="top">
+        {% if outcome %}'s outcome was {{ outcome }}{% endif %}
+        {% if not outcome %}Computer will think for {{ game.computer_think_time_ms }} milliseconds{% endif %}
         {% if not outcome %}
             {% if whose_turn == "white" %}
                 <form id="move"
@@ -30,15 +30,15 @@
         <div id="status-whatnots">
             {% include "app/new-game-form.html" %}
             {% if not outcome %}
-                {% if whose_turn == "white" %}
-                    <div>It's {{ whose_turn }}'s turn</div>
-                {% else %}
-                    <form method="post"
-                          action="{% url 'auto-move' game_display_number=game.pk %}">
-                        {% csrf_token %}
-                        <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
-                    </form>
-                {% endif %}
+                <form method="post"
+                      action="{% url 'set-think-time' game_display_number=game.pk %}">
+                    {% csrf_token %}
+                    <label>
+                        Computer think time, in milliseconds
+                        <input type="number" name="gnuchess-timelimit-ms" min="0" max="10000" />
+                    </label>
+                </form>
+                <div>It's {{ whose_turn }}'s turn</div>
             {% endif %}
         </div>
     </div>
