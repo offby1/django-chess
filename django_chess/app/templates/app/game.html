@@ -1,130 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="online chess, Yo">
-        <meta name="keywords" content="chess">
-        <title>Chess, Yo</title>
-    </head>
-    <body>
-        <div id="top">
-            {% if outcome %}
-                Game {{ game.pk }}'s outcome was {{ outcome }}
-            {% elif game %}
-                Computer will think for {{ game.computer_think_time_ms }} milliseconds
+{% extends "app/base.html" %}
+{% block title %}
+    Game {{ game.pk }}
+    {% if outcome %}'s outcome was {{ outcome }}{% endif %}
+    {% if not outcome %}Computer will think for {{ game.computer_think_time_ms }} milliseconds{% endif %}
+{% endblock title %}
+{% block content %}
+    <div id="top">
+        {% if not outcome %}
+            {% if whose_turn == "white" %}
+                <form id="move"
+                      method="post"
+                      name="move"
+                      action="{% url 'move' game_display_number=game.pk %}">
+                    {% csrf_token %}
+                </form>
+            {% endif %}
+        {% endif %}
+        <div id="board-plus-eventlog">
+            <div class="board">
+                {% for s in squares %}{{ s }}{% endfor %}
+            </div>
+            <div id="event-log">
+                <h3>
+                    <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">Moves</a>
+                </h3>
+                {% for line in event_log %}<div>{{ line }}</div>{% endfor %}
+            </div>
+        </div>
+        <div id="status-whatnots">
+            {% include "app/new-game-form.html" %}
+            {% if not outcome %}
                 {% if whose_turn == "white" %}
-                    <form id="move"
-                          method="post"
-                          name="move"
-                          action="{% url 'move' game_display_number=game.pk %}">
+                    <div>It's {{ whose_turn }}'s turn</div>
+                {% else %}
+                    <form method="post"
+                          action="{% url 'auto-move' game_display_number=game.pk %}">
                         {% csrf_token %}
+                        <button class="btn btn-primary" type="submit" name="action" value="auto-move">Play a Move for {{ whose_turn }}</button>
                     </form>
                 {% endif %}
             {% endif %}
-            <div id="board-plus-eventlog">
-                <div class="board">
-                    {% for s in squares %}{{ s }}{% endfor %}
-                </div>
-                <div id="event-log">
-                    <h3>
-                        <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">Moves</a>
-                    </h3>
-                    {% for line in event_log %}<div>{{ line }}</div>{% endfor %}
-                </div>
-            </div>
-            <div id="status-whatnots">
-                <form method="post" action="{% url 'game' %}">
-                    {% csrf_token %}
-                    <button class="btn btn-primary"
-                            type="submit"
-                            name="action"
-                            value="Make a new game, yo">NEW GAME</button>
-                </form>
-                {% if game %}
-                    {% if not outcome %}
-                        <form method="post"
-                              action="{% url 'set-think-time' game_display_number=game.pk %}">
-                            {% csrf_token %}
-                            <label>
-                                Computer think time, in milliseconds
-                                <input type="number" name="gnuchess-timelimit-ms" min="0" max="10000" />
-                            </label>
-                        </form>
-                        <div>It's {{ whose_turn }}'s turn</div>
-                    {% endif %}
-                {% endif %}
-            </div>
-            <script async src="https://js.stripe.com/v3/buy-button.js"></script>
-            <div id="stripe-buy-button">
-                <stripe-buy-button buy-button-id="buy_btn_1RwtbAACKcztBNEZylsuxN2K" publishable-key="pk_live_51RwsWAACKcztBNEZql1nz6vlZCbKfU7KCXtzMdLJm6wvgPByGf7xU47v1TLgTFmuEncS7zV1mmvdLPaW3MPH7gq700LLOU0XO4">
-                </stripe-buy-button>
-            </div>
         </div>
-    </body>
-    <style>
-     div#top {
-         display: flex;
-         flex-direction: column;
-     }
-     div#status-whatnots {
-         display: flex;
-         justify-content: space-between;
-     }
-     div#status-whatnots > div {
-         font-size: x-large;
-         font-weight: bold;
-     }
-     div#board-plus-eventlog {
-         display: flex;
-         flex-wrap: wrap;
-     }
-     div#event-log {
-         border: 1px solid;
-         font-family: monospace;
-         font-size: xx-large;
-         height: min(90vw, 90vh);;
-         overflow: scroll;
-         div {
-             border-bottom: 1px dashed;
-         }
-         /* White always makes the first move */
-         div:nth-of-type(odd) {
-             background-color: #eee;
-         }
-         div:nth-of-type(even) {
-             background-color: #666666;
-         }
-     }
-     .board {
-         display: grid;
-         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-         width: min(90vw, 90vh);
-         margin: 10px;
-         border: thick black solid;
-     }
-     .board > div {
-         border: 1px solid black;
-         aspect-ratio: 1;
-         display: grid;
-     }
-     .board > div > a {
-         display: grid;
-     }
-     .board > div.dark {
-         background-color: darkgrey;
-     }
-     .board > div.light {
-         background-color: lightgrey;
-     }
-     .board > div > div {
-         display: grid;
-     }
-     .highlighted {
-         background-color: lightgreen;
-     }
-     .potential-target {
-         background-color: blue;
-     }
-    </style>
-</html>
+    </div>
+{% endblock content %}

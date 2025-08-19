@@ -6,9 +6,11 @@ from debug_toolbar.toolbar import debug_toolbar_urls  # type: ignore [import-unt
 from django_chess.app import views
 
 urlpatterns = [
-    path("", lambda request: HttpResponseRedirect(reverse("game"))),
+    path("", views.home, name="home"),
     path("admin/", admin.site.urls),
-    path("game/", views.game, name="game"),
+    path("game/<int:game_display_number>/", views.game, name="game"),
+    # POST-only urls
     path("move/<int:game_display_number>/", views.move, name="move"),
+    path("game/", views.new_game, name="new-game"),
     path("set-think-time/<int:game_display_number>/", views.set_think_time, name="set-think-time"),
 ] + debug_toolbar_urls()

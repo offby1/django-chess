@@ -3,7 +3,7 @@ import chess
 import pytest
 
 from django_chess.app.tests import promotion_moves
-from django_chess.app.views import promoting_push
+from django_chess.app.utils import promoting_push
 
 from django.test import TestCase
 
