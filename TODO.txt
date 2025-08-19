@@ -1,7 +1,6 @@
 IN PROGRESS
 
 TODO
-* Mark the most-recently-moved piece by making it glow or something; it's hard to tell which piece moved.
 * Automatically scroll the "moves" list to the end after the page loads.
 * Maybe switch to UUIDs for primary keys -- that way when you create a new game, nobody but you knows the URL for it, and you needn't worry about people coming along and playing for you.
 * Make the items in the event log clickable -- they take you to the board's state at that point.  I imagine that display should be read-only, since I'm not yet prepared to keep a tree of history for each game.
@@ -11,6 +10,7 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* Mark the most-recently-moved piece by making it glow or something; it's hard to tell which piece moved.
 * Have a toggle switch for each side, controlling whether gnuchess plays for that side.
   Well, actually, I've got a *slider* for just Black, controlling how long gnuchess gets to think for it.
 * I've gotten a pawn to the other side of the board, but it didn't magically turn into a queen.

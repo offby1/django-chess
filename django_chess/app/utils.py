@@ -88,6 +88,12 @@ def html_for_square(
         case _:
             assert False, f"I don't know what to do with {flavor=}"
 
+    if piece is not None and board.move_stack:
+        most_recent_move = board.move_stack[-1].to_square
+
+        if square == most_recent_move:
+            css_class += " glow"
+
     content = svg_piece
     assert link_target is None or button_magic is None
 

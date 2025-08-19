@@ -91,5 +91,21 @@
      .potential-target {
          background-color: blue;
      }
+     /* from https://www.perplexity.ai/search/using-css-or-bootstrap-how-can-A5U0WSQKTdS172ms6crEdQ */
+     @keyframes throb {
+         0% {
+             box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+         }
+         70% {
+             box-shadow: 0 0 0 20px rgba(255, 215, 0, 0);
+         }
+         100% {
+             box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+         }
+     }
+
+     .glow {
+         animation: throb 1s infinite;
+     }
     </style>
 </html>
