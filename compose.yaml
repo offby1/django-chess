@@ -5,17 +5,22 @@ volumes:
   sqlite_data:
 
 services:
-  django:
+  django: &django
     build:
       context: .
       dockerfile: Dockerfile
       labels:
          info.offby1.chess.git-version: ${GIT_VERSION:-}
 
+    depends_on:
+      django-migrated:
+        condition: service_completed_successfully
+
     environment:
       DJANGO_SECRET_FILE: /run/secrets/django_secret
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-}
       DOCKER_CONTEXT: ${DOCKER_CONTEXT:-} # so each machine "knows" where it is -- orbstack, hetz, ls, &c
+      SQLITE_DATA_DIR: /chess/data
 
     ports:
       - "127.0.0.1:8000:8000"
@@ -26,6 +31,16 @@ services:
     labels:
       caddy: ${CADDY_HOSTNAME:-}
       caddy.reverse_proxy: "{{upstreams 8000}}"
+
+    volumes:
+      - sqlite_data:/chess/data
+
+  django-migrated:
+    <<: *django
+    command: ["uv", "run", "--no-dev", "python", "manage.py", "migrate", "--noinput"]
+    restart: "no"
+    ports: []
+    depends_on: []
 
 secrets:
   django_secret:

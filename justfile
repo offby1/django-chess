@@ -5,20 +5,17 @@ DJANGO_SECRET_DIRECTORY := config_directory() / "info.offby1.chess"
 export DJANGO_SECRET_FILE := DJANGO_SECRET_DIRECTORY / "django_secret_key"
 export DJANGO_SETTINGS_MODULE := env("DJANGO_SETTINGS_MODULE", "django_chess.dev_settings")
 
-uv-install:
-    uv sync
-
-mypy: uv-install
+mypy:
     uv run dmypy run -- --strict .
 
-main: mypy
+demo: mypy
     uv run python main.py
 
 test: mypy
+    uv run python manage.py makemigrations
     uv run pytest .
 
 runme: test
-    uv run python manage.py makemigrations
     uv run python manage.py migrate
     uv run python manage.py runserver
 
@@ -35,7 +32,7 @@ ensure-django-secret:
     fi
 
 [script('bash')]
-dcu: test ensure-django-secret
+dc *options: test ensure-django-secret
     set -euo pipefail
 
     export CADDY_HOSTNAME=chess.offby1.info
@@ -44,9 +41,10 @@ dcu: test ensure-django-secret
 
     echo COMPOSE_PROFILE is {{ COMPOSE_PROFILE }}
 
-    docker compose                up --build --detach
-    docker compose logs django --follow
+    docker compose {{ options }}
+
+dcu: (dc "up --build")
 
 prod:
     export DJANGO_SETTINGS_MODULE=django_chess.prod_settings
-    DOCKER_CONTEXT=chess just dcu
+    DOCKER_CONTEXT=chess just dc up --build --detach

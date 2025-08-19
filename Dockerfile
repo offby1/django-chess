@@ -8,16 +8,24 @@ ENV PYTHONUNBUFFERED=t
 
 RUN adduser --disabled-password chess
 
-COPY uv.lock pyproject.toml manage.py start-daphne.sh /chess/
-COPY django_chess/ /chess/django_chess/
+FROM python AS uv-install-django
 
+COPY uv.lock pyproject.toml /chess/
 WORKDIR /chess
+RUN ["uv", "sync", "--no-dev"]
+
+FROM python AS app
+
+COPY --from=uv-install-django /chess/ /chess/
+COPY django_chess/ /chess/django_chess/
+COPY manage.py start-daphne.sh /chess/
+
 RUN chown -R chess:chess /chess
 
 USER chess
-RUN ["uv", "sync"]
 
-RUN ["uv", "run", "python", "manage.py", "makemigrations"]
-RUN ["uv", "run", "python", "manage.py", "migrate"]
+WORKDIR /chess
+RUN mkdir /chess/data
 
+# Note that someone -- typically docker-compose -- needs to have run "collectstatic" and "migrate" first
 CMD ["bash", "./start-daphne.sh"]
