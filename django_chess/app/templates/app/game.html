@@ -4,7 +4,7 @@
 {% endblock title %}
 {% block content %}
     <div id="top">
-        {% if outcome %}'s outcome was {{ outcome }}{% endif %}
+        {% if outcome %}Game {{ game.pk }}'s outcome was {{ outcome }}{% endif %}
         {% if not outcome %}Computer will think for {{ game.computer_think_time_ms }} milliseconds{% endif %}
         {% if not outcome %}
             {% if whose_turn == "white" %}
