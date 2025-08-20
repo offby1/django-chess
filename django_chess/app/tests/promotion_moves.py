@@ -6,8 +6,7 @@ until I stumbled upon a game where a pawn got promoted.
 """
 
 import chess
-
-from django_chess.app.utils import promoting_push
+from django_chess.app.models import Game
 
 move_uci_strings_black = [
     "b1c3",
@@ -274,11 +273,11 @@ move_uci_strings_white = [
 ]
 
 
-def play_back_prep_black(board: chess.Board) -> None:
+def play_back_prep_black(game: Game, board: chess.Board) -> None:
     for uci in move_uci_strings_black:
-        promoting_push(board, chess.Move.from_uci(uci))
+        game.promoting_push(board, chess.Move.from_uci(uci))
 
 
-def play_back_prep_white(board: chess.Board) -> None:
+def play_back_prep_white(game: Game, board: chess.Board) -> None:
     for uci in move_uci_strings_white:
-        promoting_push(board, chess.Move.from_uci(uci))
+        game.promoting_push(board, chess.Move.from_uci(uci))

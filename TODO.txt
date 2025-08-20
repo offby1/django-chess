@@ -3,14 +3,14 @@ IN PROGRESS
 TODO
 * If the last move put someone in check, note that somewhere!
 * Make the items in the event log clickable -- they take you to the board's state at that point.  I imagine that display should be read-only, since I'm not yet prepared to keep a tree of history for each game.
-* How about listing the existing games, and letting me see them via a single click?  Right now I have to manually type in a URL like `http://localhost:8000/game/?game_display_number=3`
-
-  OTOH, I don't want random strangers to be able to futz with a game in progress; perhaps I should list only *completed* games.
 * Sometimes it lets me click on a piece, and it highlights; but there are no legal moves.  WTF? I can't remember exactly how I got into this situation; I think I had the king in check and had cliked on some random faraway pawn.  It's not surprising that it has no legal moves, since the only legal moves are either "move the king out of danger", "capture the piece that's endangering the king", or "interpose a piece between the king and its attacker".
 
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* How about listing the existing games, and letting me see them via a single click?  Right now I have to manually type in a URL like `http://localhost:8000/game/?game_display_number=3`
+
+  OTOH, I don't want random strangers to be able to futz with a game in progress; perhaps I should list only *completed* games.
 * Maybe switch to UUIDs for primary keys -- that way when you create a new game, nobody but you knows the URL for it, and you needn't worry about people coming along and playing for you.
 * Automatically scroll the "moves" list to the end after the page loads.
 * I suspect I'm not actually preserving the database between prod deploys.

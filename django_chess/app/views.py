@@ -20,7 +20,6 @@ from django_chess.app.utils import (
     get_squares_none_selected,
     get_squares_with_selection,
     load_board,
-    promoting_push,
     save_board,
     sort_upper_left_first,
 )
@@ -41,10 +40,14 @@ GNUCHESS_EXECUTABLE = "/usr/games/gnuchess"
 
 @require_http_methods(["GET"])
 def home(request: HttpRequest) -> HttpResponse:
+    completed_games = Game.objects.filter(in_progress=False)
     return TemplateResponse(
         request,
         "app/home.html",
-        context={"num_games": Game.objects.count()},
+        context={
+            "completed_games": completed_games,
+            "num_games": Game.objects.count(),
+        },
     )
 
 
@@ -105,7 +108,10 @@ def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
     move = chess.Move.from_uci(request.POST["move"])
 
     # TODO -- check that the move is legal
-    promoting_push(board, move)
+    game.promoting_push(board, move)
+
+    if board.outcome() is not None:
+        game.in_progress = False
 
     save_board(board=board, game=game)
 
@@ -116,7 +122,7 @@ def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
             )
 
             if result.move is not None:
-                promoting_push(board, result.move)
+                game.promoting_push(board, result.move)
                 save_board(board=board, game=game)
 
     return HttpResponseRedirect(

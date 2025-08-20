@@ -205,18 +205,6 @@ def save_board(*, board: chess.Board, game: Game) -> None:
     game.save()
 
 
-def promoting_push(board: chess.Board, move: chess.Move) -> None:
-    # unfortunately this is effectively a copy of some code in Board.is_pseudo_legal
-    piece = board.piece_type_at(move.from_square)
-
-    if piece == chess.PAWN and (
-        (board.turn == chess.WHITE and chess.square_rank(move.to_square) == 7)
-        or (board.turn == chess.BLACK and chess.square_rank(move.to_square) == 0)
-    ):
-        move.promotion = chess.QUEEN
-    board.push(move)
-
-
 def load_board(*, game: Game) -> chess.Board:
     board = chess.Board()
     sans = []
@@ -225,7 +213,7 @@ def load_board(*, game: Game) -> chess.Board:
         for m_uci_str in json.loads(game.moves):
             move = chess.Move.from_uci(m_uci_str)
             sans.append(board.san(move))
-            promoting_push(board, move)
+            game.promoting_push(board, move)
 
     setattr(board, "sans", sans)
     return board

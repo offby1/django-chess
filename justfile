@@ -11,13 +11,13 @@ mypy:
 demo: mypy
     uv run python main.py
 
-manage *options: mypy
+manage *options:
     uv run python manage.py {{ options }}
 
-test: mypy (manage "makemigrations")
+test: (manage "makemigrations") (manage "migrate") mypy
     uv run pytest .
 
-runme: test version-file (manage "migrate") (manage "runserver")
+runme: test version-file (manage "runserver")
 
 [private]
 [script('bash')]
