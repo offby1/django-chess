@@ -43,3 +43,20 @@
         </div>
     </div>
 {% endblock content %}
+{% block scripts %}
+    <script>
+    function scrollEventLogToEnd() {
+    var eventLog = document.querySelector("#event-log")
+    var divs = eventLog.querySelectorAll("div");
+    var lastDiv = divs[divs.length - 1];
+    lastDiv.scrollIntoView();
+    }
+    if (document.readyState === "loading") {
+    // Loading hasn't finished yet
+    document.addEventListener("DOMContentLoaded", scrollEventLogToEnd);
+    } else {
+    // `DOMContentLoaded` has already fired
+    scrollEventLogToEnd();
+    }
+    </script>
+{% endblock scripts %}
