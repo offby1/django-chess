@@ -1,5 +1,4 @@
 IN PROGRESS
-* I suspect I'm not actually preserving the database between prod deploys.
 
 TODO
 * If the last move put someone in check, note that somewhere!
@@ -12,6 +11,7 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* I suspect I'm not actually preserving the database between prod deploys.
 * Mark the most-recently-moved piece by making it glow or something; it's hard to tell which piece moved.
 * Have a toggle switch for each side, controlling whether gnuchess plays for that side.
   Well, actually, I've got a *slider* for just Black, controlling how long gnuchess gets to think for it.
