@@ -1,7 +1,4 @@
-import enum
-import json
-import random
-from typing import Any, Iterable, Iterator
+from uuid import UUID
 
 import chess
 import chess.engine
@@ -10,16 +7,12 @@ import chess.svg
 from django.http import (
     HttpRequest,
     HttpResponse,
-    HttpResponseServerError,
     HttpResponseNotFound,
     HttpResponseRedirect,
 )
-from django.shortcuts import get_object_or_404, render
-from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils.html import format_html
-from django.utils.safestring import SafeString
 from django.views.decorators.http import require_http_methods
 
 from django_chess.app.models import Game
@@ -62,7 +55,7 @@ def new_game(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def game(request: HttpRequest, game_display_number: int) -> HttpResponse:
+def game(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
     game = Game.objects.filter(pk=game_display_number).first()
     if game is None:
         return HttpResponseNotFound()
@@ -101,7 +94,7 @@ def game(request: HttpRequest, game_display_number: int) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-def move(request: HttpRequest, game_display_number: int) -> HttpResponse:
+def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
     game = Game.objects.filter(pk=game_display_number).first()
     if game is None:
         return HttpResponseNotFound()

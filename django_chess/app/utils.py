@@ -1,6 +1,7 @@
 import enum
 import json
 from typing import Any, Iterable, Iterator
+from uuid import UUID
 
 import chess
 
@@ -31,7 +32,7 @@ class SquareFlavor(enum.Enum):
     CAPTURABLE_PIECE = enum.auto()
 
 
-def move_button(*, game_display_number: int, from_: chess.Square, to: chess.Square) -> Any:
+def move_button(*, game_display_number: UUID | str, from_: chess.Square, to: chess.Square) -> Any:
     the_move = chess.Move(from_square=from_, to_square=to)
     label = the_move.uci()
 
@@ -47,7 +48,7 @@ def html_for_square(
     board: chess.Board,
     selected_square: chess.Square | None = None,
     square: chess.Square,
-    game_display_number: int,
+    game_display_number: UUID | str,
     flavor: SquareFlavor,
 ) -> SafeString:
     piece = board.piece_map().get(square, None)
@@ -119,7 +120,7 @@ def html_for_square(
 
 
 def get_squares_none_selected(
-    *, board: chess.Board, game_display_number: int
+    *, board: chess.Board, game_display_number: UUID | str
 ) -> Iterator[tuple[chess.Square, str]]:
     legal_moves = list(board.legal_moves) if board.legal_moves else []
     movable_pieces = {board.piece_at(m.from_square) for m in legal_moves}
@@ -148,7 +149,7 @@ def get_squares_none_selected(
 
 
 def get_squares_with_selection(
-    *, board: chess.Board, game_display_number: int, selected_square: chess.Square
+    *, board: chess.Board, game_display_number: UUID | str, selected_square: chess.Square
 ) -> Iterator[tuple[chess.Square, str]]:
     yield_me = dict(get_squares_none_selected(board=board, game_display_number=game_display_number))
 
