@@ -9,8 +9,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      labels:
-         info.offby1.chess.git-version: ${GIT_VERSION:-}
 
     depends_on:
       django-migrated:

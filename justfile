@@ -15,7 +15,7 @@ test: mypy
     uv run python manage.py makemigrations
     uv run pytest .
 
-runme: test
+runme: test version-file
     uv run python manage.py migrate
     uv run python manage.py runserver
 
@@ -31,13 +31,16 @@ ensure-django-secret:
     uv run python  -c 'import secrets; print(secrets.token_urlsafe(100))' > "{{ DJANGO_SECRET_FILE }}"
     fi
 
+[private]
+version-file:
+    uv run python generate-version-html.py > django_chess/app/templates/app/version.html
+
 [script('bash')]
-dc *options: test ensure-django-secret
+dc *options: test ensure-django-secret version-file
     set -euo pipefail
 
     export CADDY_HOSTNAME=chess.offby1.info
     export DJANGO_SECRET_KEY=$(cat "${DJANGO_SECRET_FILE}")
-    export GIT_VERSION=TODO
 
     echo COMPOSE_PROFILE is {{ COMPOSE_PROFILE }}
 
