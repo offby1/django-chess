@@ -5,13 +5,12 @@
 {% block content %}
     <div id="top">
         {% if outcome %}Game {{ game.pk }}'s outcome was {{ outcome }}{% endif %}
-        {% if not outcome %}Computer will think for {{ game.computer_think_time_ms }} milliseconds{% endif %}
         {% if not outcome %}
             {% if whose_turn == "white" %}
                 <form id="move"
                       method="post"
                       name="move"
-                      action="{% url 'move' game_display_number=game.pk %}">
+                      action="{% url 'move' game_id=game.pk %}">
                     {% csrf_token %}
                 </form>
             {% endif %}
@@ -30,31 +29,25 @@
         <div id="status-whatnots">
             {% include "app/new-game-form.html" %}
             {% if not outcome %}
-                <form method="post"
-                      action="{% url 'set-think-time' game_display_number=game.pk %}">
-                    {% csrf_token %}
-                    <label>
-                        Computer think time, in milliseconds
-                        <input type="number" name="gnuchess-timelimit-ms" min="0" max="10000" />
-                    </label>
-                </form>
-                <div>It's {{ whose_turn }}'s turn</div>
+            {% include "app/smartness-slider.html" %}
+                <div id="whose-turn">It's {{ whose_turn }}'s turn</div>
             {% endif %}
         </div>
     </div>
 {% endblock content %}
 {% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
     <script>
-    function scrollEventLogToEnd() {
+     function scrollEventLogToEnd() {
          var eventLog = document.querySelector("#event-log")
          eventLog.scrollTop = eventLog.scrollHeight;
-    }
-    if (document.readyState === "loading") {
-    // Loading hasn't finished yet
-    document.addEventListener("DOMContentLoaded", scrollEventLogToEnd);
-    } else {
-    // `DOMContentLoaded` has already fired
-    scrollEventLogToEnd();
-    }
+     }
+     if (document.readyState === "loading") {
+         // Loading hasn't finished yet
+         document.addEventListener("DOMContentLoaded", scrollEventLogToEnd);
+     } else {
+         // `DOMContentLoaded` has already fired
+         scrollEventLogToEnd();
+     }
     </script>
 {% endblock scripts %}

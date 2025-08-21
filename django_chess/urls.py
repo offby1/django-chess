@@ -8,9 +8,11 @@ from django_chess.app import views
 urlpatterns = [
     path("", views.home, name="home"),
     path("admin/", admin.site.urls),
-    path("game/<uuid:game_display_number>/", views.game, name="game"),
+    path("game/<uuid:game_id>/", views.game, name="game"),
     # POST-only urls
-    path("move/<uuid:game_display_number>/", views.move, name="move"),
+    path("move/<uuid:game_id>/", views.move, name="move"),
     path("game/", views.new_game, name="new-game"),
-    path("set-think-time/<uuid:game_display_number>/", views.set_think_time, name="set-think-time"),
+    path(
+        "set-black-smartness/<uuid:game_id>/", views.set_black_smartness, name="set-black-smartness"
+    ),
 ] + debug_toolbar_urls()

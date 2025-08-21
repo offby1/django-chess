@@ -1,0 +1,13 @@
+<div id="smartness">
+    Black Smartness
+<label for="smartness_tenths">
+    {{ game.black_smartness }} / 10
+</label>
+    <input hx-post="{% url 'set-black-smartness' game_id=game.pk %}"
+           hx-target="#smartness"
+           type="range" name="smartness_tenths" min="0" max="10" step="1"
+           value="{{ game.black_smartness }}"
+           required
+           id="smartness_tenths">
+
+</div>

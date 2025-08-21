@@ -11,6 +11,7 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* Dumb down Black even futher, by only invoking it on some moves, and choosing a random legal move otherwise.
 * See what, if anything, needs to be done to ensure the docker compose stack comes up automatically after I reboot the big host.
   It looks like caddy automatically restarts; I wonder if it's as simple as adding `restart: unless-stopped` (caddy's compose file has that; mine doesn't).
 * Automatically scroll the "moves" list to the end after the page loads.

@@ -1,6 +1,7 @@
 import os
 import pathlib
 import random
+
 from uuid import UUID
 
 import chess
@@ -27,6 +28,7 @@ from django_chess.app.utils import (
     sort_upper_left_first,
 )
 
+
 def _first_existing_executable(candidates: list[str]) -> pathlib.Path | None:
     for c in candidates:
         p = pathlib.Path(c)
@@ -35,13 +37,15 @@ def _first_existing_executable(candidates: list[str]) -> pathlib.Path | None:
 
     return None
 
-GNUCHESS_EXECUTABLE = _first_existing_executable([
-    # This works on Debian 12 ("bookworm")
-    "/usr/games/gnuchess",
 
-    #This works on MacOS with homebrew
-    "/opt/homebrew/bin/gnuchess",
-])
+GNUCHESS_EXECUTABLE = _first_existing_executable(
+    [
+        # This works on Debian 12 ("bookworm")
+        "/usr/games/gnuchess",
+        # This works on MacOS with homebrew
+        "/opt/homebrew/bin/gnuchess",
+    ]
+)
 
 
 # If no square is selected:
@@ -70,12 +74,12 @@ def home(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["POST"])
 def new_game(request: HttpRequest) -> HttpResponse:
     new_game = Game.objects.create()
-    return HttpResponseRedirect(reverse("game", kwargs=dict(game_display_number=new_game.pk)))
+    return HttpResponseRedirect(reverse("game", kwargs=dict(game_id=new_game.pk)))
 
 
 @require_http_methods(["GET"])
-def game(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
-    game = Game.objects.filter(pk=game_display_number).first()
+def game(request: HttpRequest, game_id: UUID | str) -> HttpResponse:
+    game = Game.objects.filter(pk=game_id).first()
     if game is None:
         return HttpResponseNotFound()
 
@@ -88,10 +92,10 @@ def game(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
         selected_square = chess.square(int(file_), int(rank))
 
     if selected_square is None:
-        square_items = get_squares_none_selected(board=board, game_display_number=game.pk)
+        square_items = get_squares_none_selected(board=board, game_id=game.pk)
     else:
         square_items = get_squares_with_selection(
-            board=board, game_display_number=game.pk, selected_square=selected_square
+            board=board, game_id=game.pk, selected_square=selected_square
         )
 
     context = {
@@ -112,9 +116,16 @@ def game(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
     )
 
 
+def num_black_moves(board: chess.Board) -> int:
+    # Remember, len(board.move_stack) == the number of "half-moves".
+    total_moves, _ = divmod(len(board.move_stack), 2)
+
+    return total_moves
+
+
 @require_http_methods(["POST"])
-def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
-    game: Game | None = Game.objects.filter(pk=game_display_number).first()
+def move(request: HttpRequest, game_id: UUID | str) -> HttpResponse:
+    game: Game | None = Game.objects.filter(pk=game_id).first()
     if game is None:
         return HttpResponseNotFound()
 
@@ -131,27 +142,29 @@ def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
 
     save_board(board=board, game=game)
 
-    if game.computer_think_time_ms > 0 and GNUCHESS_EXECUTABLE is not None:
+    if num_black_moves(board) % 10 < game.black_smartness and GNUCHESS_EXECUTABLE is not None:
         with chess.engine.SimpleEngine.popen_uci([str(GNUCHESS_EXECUTABLE), "--uci"]) as engine:
-            result = engine.play(
-                board, chess.engine.Limit(time=game.computer_think_time_ms / 1_000)
-            )
+            result = engine.play(board, chess.engine.Limit(time=0))
 
             if result.move is not None:
                 game.promoting_push(board, result.move)
                 save_board(board=board, game=game)
+    else:
+        legal_moves = list(board.legal_moves)
+        if legal_moves:
+            random.shuffle(legal_moves)
+            game.promoting_push(board, legal_moves[0])
+            save_board(board=board, game=game)
 
-    return HttpResponseRedirect(
-        reverse("game", kwargs=dict(game_display_number=game_display_number))
-    )
+    return HttpResponseRedirect(reverse("game", kwargs=dict(game_id=game_id)))
 
 
+# Meant for HTMX, which is why it returns just the slider, not a whole page.
 @require_http_methods(["POST"])
-def set_think_time(request: HttpRequest, game_display_number: int) -> HttpResponse:
-    game = get_object_or_404(Game, pk=game_display_number)
-    game.computer_think_time_ms = request.POST["gnuchess-timelimit-ms"]
+def set_black_smartness(request: HttpRequest, game_id: UUID) -> TemplateResponse:
+    game = get_object_or_404(Game, pk=game_id)
+
+    game.black_smartness = request.POST["smartness_tenths"]
     game.save()
 
-    return HttpResponseRedirect(
-        reverse("game", kwargs=dict(game_display_number=game_display_number))
-    )
+    return TemplateResponse(request, "app/smartness-slider.html", context={"game": game})

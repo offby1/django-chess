@@ -8,8 +8,8 @@ from django.db import models
 class Game(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     in_progress = models.BooleanField(default=True)
-    moves = models.CharField(null=True)
-    computer_think_time_ms = models.PositiveSmallIntegerField(default=1)
+    moves = models.CharField(null=True) # JSON list of UCI strings
+    black_smartness = models.PositiveSmallIntegerField(default=10)
 
     def promoting_push(self, board: chess.Board, move: chess.Move) -> None:
         # unfortunately this is effectively a copy of some code in Board.is_pseudo_legal

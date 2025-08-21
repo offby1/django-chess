@@ -32,7 +32,7 @@ class SquareFlavor(enum.Enum):
     CAPTURABLE_PIECE = enum.auto()
 
 
-def move_button(*, game_display_number: UUID | str, from_: chess.Square, to: chess.Square) -> Any:
+def move_button(*, game_id: UUID | str, from_: chess.Square, to: chess.Square) -> Any:
     the_move = chess.Move(from_square=from_, to_square=to)
     label = the_move.uci()
 
@@ -48,7 +48,7 @@ def html_for_square(
     board: chess.Board,
     selected_square: chess.Square | None = None,
     square: chess.Square,
-    game_display_number: UUID | str,
+    game_id: UUID | str,
     flavor: SquareFlavor,
 ) -> SafeString:
     piece = board.piece_map().get(square, None)
@@ -68,7 +68,7 @@ def html_for_square(
         case SquareFlavor.SELECTABLE:
             link_target = reverse(
                 "game",
-                kwargs=dict(game_display_number=game_display_number),
+                kwargs=dict(game_id=game_id),
                 query=dict(
                     rank=chess.square_rank(square),
                     file=chess.square_file(square),
@@ -78,13 +78,11 @@ def html_for_square(
             css_class = "highlighted"
             link_target = reverse(
                 "game",
-                kwargs=dict(game_display_number=game_display_number),
+                kwargs=dict(game_id=game_id),
             )
         case SquareFlavor.MOVE_HERE | SquareFlavor.CAPTURABLE_PIECE:
             assert selected_square is not None
-            button_magic = move_button(
-                game_display_number=game_display_number, from_=selected_square, to=square
-            )
+            button_magic = move_button(game_id=game_id, from_=selected_square, to=square)
         case _:
             assert False, f"I don't know what to do with {flavor=}"
 
@@ -120,7 +118,7 @@ def html_for_square(
 
 
 def get_squares_none_selected(
-    *, board: chess.Board, game_display_number: UUID | str
+    *, board: chess.Board, game_id: UUID | str
 ) -> Iterator[tuple[chess.Square, str]]:
     legal_moves = list(board.legal_moves) if board.legal_moves else []
     movable_pieces = {board.piece_at(m.from_square) for m in legal_moves}
@@ -142,16 +140,16 @@ def get_squares_none_selected(
                 html_for_square(
                     board=board,
                     square=this_square,
-                    game_display_number=game_display_number,
+                    game_id=game_id,
                     flavor=flavor,
                 ),
             )
 
 
 def get_squares_with_selection(
-    *, board: chess.Board, game_display_number: UUID | str, selected_square: chess.Square
+    *, board: chess.Board, game_id: UUID | str, selected_square: chess.Square
 ) -> Iterator[tuple[chess.Square, str]]:
-    yield_me = dict(get_squares_none_selected(board=board, game_display_number=game_display_number))
+    yield_me = dict(get_squares_none_selected(board=board, game_id=game_id))
 
     legal_moves = list(board.legal_moves) if board.legal_moves else []
 
@@ -168,7 +166,7 @@ def get_squares_with_selection(
             def p(*, flavor: SquareFlavor) -> str:
                 return html_for_square(
                     board=board,
-                    game_display_number=game_display_number,
+                    game_id=game_id,
                     selected_square=selected_square,
                     square=this_square,
                     flavor=flavor,

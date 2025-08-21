@@ -109,6 +109,7 @@ repro_moves = [
     "d6d8",
 ]
 
+
 def play_back_prep(game: Game, board: chess.Board) -> None:
     for uci in repro_moves:
         game.promoting_push(board, chess.Move.from_uci(uci))

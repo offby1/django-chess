@@ -9,7 +9,7 @@
         <ul>
             {% for g in completed_games %}
                 <li>
-                    <a href="{% url "game" game_display_number=g.pk %}">{{ g.pk }}</a>
+                    <a href="{% url "game" game_id=g.pk %}">{{ g.pk }}</a>
                 </li>
             {% endfor %}
         </ul>
