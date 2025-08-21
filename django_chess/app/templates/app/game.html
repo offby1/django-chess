@@ -46,10 +46,8 @@
 {% block scripts %}
     <script>
     function scrollEventLogToEnd() {
-    var eventLog = document.querySelector("#event-log")
-    var divs = eventLog.querySelectorAll("div");
-    var lastDiv = divs[divs.length - 1];
-    lastDiv.scrollIntoView();
+         var eventLog = document.querySelector("#event-log")
+         eventLog.scrollTop = eventLog.scrollHeight;
     }
     if (document.readyState === "loading") {
     // Loading hasn't finished yet

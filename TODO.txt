@@ -8,11 +8,17 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* Automatically scroll the "moves" list to the end after the page loads.
+  I thought I'd done this, but it's done wrong: it scrolls the entire page, thus (on mobile) pushing the board off the top; I want instead to *just* scroll the div that contains the individual moves.
+
+  To reproduce:
+  - adjust the window so that the event log is *below* the board, as opposed to being to the right of the board
+  - make a move
+  - observe that the bottom of the event log is indeed visible, but the top of the board no longer is.
 * How about listing the existing games, and letting me see them via a single click?  Right now I have to manually type in a URL like `http://localhost:8000/game/?game_display_number=3`
 
   OTOH, I don't want random strangers to be able to futz with a game in progress; perhaps I should list only *completed* games.
 * Maybe switch to UUIDs for primary keys -- that way when you create a new game, nobody but you knows the URL for it, and you needn't worry about people coming along and playing for you.
-* Automatically scroll the "moves" list to the end after the page loads.
 * I suspect I'm not actually preserving the database between prod deploys.
 * Mark the most-recently-moved piece by making it glow or something; it's hard to tell which piece moved.
 * Have a toggle switch for each side, controlling whether gnuchess plays for that side.
