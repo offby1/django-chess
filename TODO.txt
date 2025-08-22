@@ -1,6 +1,10 @@
 IN PROGRESS
 
 TODO
+* See what, if anything, needs to be done to ensure the docker compose stack comes up automatically after I reboot the big host.
+  It looks like caddy automatically restarts; I wonder if it's as simple as adding `restart: unless-stopped` (caddy's compose file has that; mine doesn't).
+* Somehow animate the pieces moving.  It sounds hard, but [this site](https://www.chessgames.com/perl/chessgame?gid=1472881) does it.
+* Show the (two) collections of captured pieces.
 * If the last move put someone in check, note that somewhere!
 * Make the items in the event log clickable -- they take you to the board's state at that point.  I imagine that display should be read-only, since I'm not yet prepared to keep a tree of history for each game.
 * Sometimes it lets me click on a piece, and it highlights; but there are no legal moves.  WTF? I can't remember exactly how I got into this situation; I think I had the king in check and had cliked on some random faraway pawn.  It's not surprising that it has no legal moves, since the only legal moves are either "move the king out of danger", "capture the piece that's endangering the king", or "interpose a piece between the king and its attacker".
