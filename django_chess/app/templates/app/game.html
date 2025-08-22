@@ -19,11 +19,21 @@
             <div class="board">
                 {% for s in squares %}{{ s }}{% endfor %}
             </div>
-            <div id="event-log">
-                <h3>
-                    <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">Moves</a>
-                </h3>
-                {% for line in event_log %}<div>{{ line }}</div>{% endfor %}
+            <div id="event-log-and-captured-pieces">
+                <div id="event-log">
+                    <h3>
+                        <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">Moves</a>
+                    </h3>
+                    {% for line in event_log %}<div>{{ line }}</div>{% endfor %}
+                </div>
+                <div id="captured-pieces">
+                    <div id="black-captured-pieces">
+                        {% for piece in captured_pieces.0 %}<div>{{ piece }}</div>{% endfor %}
+                    </div>
+                    <div id="white-captured-pieces">
+                        {% for piece in captured_pieces.1 %}<div>{{ piece }}</div>{% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <div id="status-whatnots">

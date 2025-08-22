@@ -1,9 +1,11 @@
+import collections
 import enum
 import json
 from typing import Any, Iterable, Iterator
 from uuid import UUID
 
 import chess
+import chess.svg
 
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -205,13 +207,18 @@ def save_board(*, board: chess.Board, game: Game) -> None:
 
 def load_board(*, game: Game) -> chess.Board:
     board = chess.Board()
+    captured_pieces: list[list[chess.Piece]] = [[], []]
     sans = []
 
     if game.moves is not None:
         for m_uci_str in json.loads(game.moves):
             move = chess.Move.from_uci(m_uci_str)
+            if (captured_piece := board.piece_at(move.to_square)) is not None:
+                captured_pieces[captured_piece.color].append(captured_piece)
+
             sans.append(board.san(move))
             game.promoting_push(board, move)
 
     setattr(board, "sans", sans)
+    setattr(board, "captured_pieces", [[p.unicode_symbol() for p in l_] for l_ in captured_pieces])
     return board

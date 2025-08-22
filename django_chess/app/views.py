@@ -100,6 +100,7 @@ def game(request: HttpRequest, game_id: UUID | str) -> HttpResponse:
 
     context = {
         "board": board,
+        "captured_pieces": getattr(board, "captured_pieces"),
         "event_log": getattr(board, "sans", []),
         "game": game,
         "squares": [t[1] for t in sort_upper_left_first(square_items)],
