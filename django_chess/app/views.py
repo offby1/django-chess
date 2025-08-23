@@ -114,7 +114,7 @@ def game(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
 
 @require_http_methods(["POST"])
 def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
-    game = Game.objects.filter(pk=game_display_number).first()
+    game: Game | None = Game.objects.filter(pk=game_display_number).first()
     if game is None:
         return HttpResponseNotFound()
 
