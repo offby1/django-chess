@@ -1,3 +1,6 @@
+import os
+import pathlib
+import random
 from uuid import UUID
 
 import chess
@@ -24,8 +27,21 @@ from django_chess.app.utils import (
     sort_upper_left_first,
 )
 
-# TODO -- this works on Debian 12 ("bookworm") but not necessarily other distros, such as MacOS
-GNUCHESS_EXECUTABLE = "/usr/games/gnuchess"
+def _first_existing_executable(candidates: list[str]) -> pathlib.Path | None:
+    for c in candidates:
+        p = pathlib.Path(c)
+        if p.exists() and p.is_file() and os.access(p, os.X_OK):
+            return p
+
+    return None
+
+GNUCHESS_EXECUTABLE = _first_existing_executable([
+    # This works on Debian 12 ("bookworm")
+    "/usr/games/gnuchess",
+
+    #This works on MacOS with homebrew
+    "/opt/homebrew/bin/gnuchess",
+])
 
 
 # If no square is selected:
@@ -115,8 +131,8 @@ def move(request: HttpRequest, game_display_number: UUID | str) -> HttpResponse:
 
     save_board(board=board, game=game)
 
-    if game.computer_think_time_ms > 0:
-        with chess.engine.SimpleEngine.popen_uci([GNUCHESS_EXECUTABLE, "--uci"]) as engine:
+    if game.computer_think_time_ms > 0 and GNUCHESS_EXECUTABLE is not None:
+        with chess.engine.SimpleEngine.popen_uci([str(GNUCHESS_EXECUTABLE), "--uci"]) as engine:
             result = engine.play(
                 board, chess.engine.Limit(time=game.computer_think_time_ms / 1_000)
             )
