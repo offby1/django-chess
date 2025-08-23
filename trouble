@@ -1,0 +1,162 @@
+uci moves: ["g1f3", "b8c6", "f3d4", "c6d4", "b1c3", "d7d5", "c3d5", "f7f6", "d5f6", "e8f7", "f6g8", "d4c2", "d1c2", "c8g4", "f2f3", "d8d5", "f3g4", "d5d8", "g8e7", "f7f6", "e7f5", "f8b4", "c2b3", "d8f8", "b3b4", "f8b4", "e2e4", "g7g5", "e4e5", "f6e5", "f5e3", "h8d8", "e3c4", "e5e4", "f1d3", "d8d3", "g2g3", "b4b2", "c1b2", "a8g8", "c4a5", "b7b6", "a5c6", "g8f8", "c6a7", "f8a8", "a1c1", "e4f3", "c1c7", "a8b8", "c7d7", "b8a8", "d7d3", "f3g4", "d3d8", "g4f3", "d8a8", "f3g2", "d2d4", "g2h1", "d4d5", "h1h2", "d5d6", "h2g3", "d6d7", "g3g4", "d7d8q", "b6b5", "d8h8", "g4h3", "h8h7", "h3g2", "h7g7", "g2f3", "g7g5", "f3e4", "g5b5", "e4e3", "b5e2", "e3f4", "e2f2", "f4g5", "f2g3", "g5f5", "g3e5", "f5g6", "e5g7", "g6h5", "g7h7", "h5g4", "a8g8", "g4f4", "h7h2", "f4e4", "a7b5", "e4d5", "g8d8", "d5c5", "h2h5", "c5c6", "d8d6", "c6b7", "h5d5", "b7b8", "d6d8"]
+
+SAN moves:
+
+Nf3
+Nc6
+Nd4
+Nxd4
+Nc3
+d5
+Nxd5
+f6
+Nxf6+
+Kf7
+Nxg8
+Nxc2+
+Qxc2
+Bg4
+f3
+Qd5
+fxg4
+Qd8
+Nxe7
+Kf6
+Nf5
+Bb4
+Qb3
+Qf8
+Qxb4
+Qxb4
+e4
+g5
+e5+
+Kxe5
+Ne3
+Rhd8
+Nc4+
+Ke4
+Bd3+
+Rxd3
+g3
+Qxb2
+Bxb2
+Rg8
+Na5
+b6
+Nc6
+Rf8
+Nxa7
+Ra8
+Rc1
+Kf3
+Rxc7
+Rb8
+Rd7
+Ra8
+Rxd3+
+Kxg4
+Rd8
+Kf3
+Rxa8
+Kg2
+d4
+Kxh1
+d5
+Kxh2
+d6
+Kxg3
+d7
+Kg4
+d8=Q
+b5
+Qh8
+Kh3
+Qxh7+
+Kg2
+Qg7
+Kf3
+Qxg5
+Ke4
+Qxb5
+Ke3
+Qe2+
+Kf4
+Qf2+
+Kg5
+Qg3+
+Kf5
+Qe5+
+Kg6
+Qg7+
+Kh5
+Qh7+
+Kg4
+Rg8+
+Kf4
+Qh2+
+Ke4
+Nb5
+Kd5
+Rd8+
+Kc5
+Qh5+
+Kc6
+Rd6+
+Kb7
+Qd5+
+Kb8
+
+Environment:
+
+
+Request Method: POST
+Request URL: http://localhost:8000/move/027f7c1d-ae5a-4d64-b86e-9a6e9270e38b/
+
+Django Version: 5.2.5
+Python Version: 3.13.1
+Installed Applications:
+['debug_toolbar',
+ 'django_chess.app',
+ 'django.contrib.admin',
+ 'django.contrib.auth',
+ 'django.contrib.contenttypes',
+ 'django.contrib.sessions',
+ 'django.contrib.messages',
+ 'django.contrib.staticfiles']
+Installed Middleware:
+['debug_toolbar.middleware.DebugToolbarMiddleware',
+ 'django.middleware.security.SecurityMiddleware',
+ 'django.contrib.sessions.middleware.SessionMiddleware',
+ 'django.middleware.common.CommonMiddleware',
+ 'django.middleware.csrf.CsrfViewMiddleware',
+ 'django.contrib.auth.middleware.AuthenticationMiddleware',
+ 'django.contrib.messages.middleware.MessageMiddleware',
+ 'django.middleware.clickjacking.XFrameOptionsMiddleware']
+
+
+
+Traceback (most recent call last):
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/views/decorators/http.py", line 64, in inner
+    return func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/django_chess/app/views.py", line 142, in move
+    game.promoting_push(board, move)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/django_chess/app/models.py", line 23, in promoting_push
+    board.push(move)
+    ^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/chess/__init__.py", line 2369, in push
+    assert piece_type is not None, f"push() expects move to be pseudo-legal, but got {move} in {self.board_fen()}"
+           ^^^^^^^^^^^^^^^^^^^^^^
+
+Exception Type: AssertionError at /move/027f7c1d-ae5a-4d64-b86e-9a6e9270e38b/
+Exception Value: push() expects move to be pseudo-legal, but got d6d8 in 1k1R4/8/8/1N1Q4/8/8/PB6/4K3
+
+It looks like [this commit](https://github.com/MarkZH/python-chess/commit/518d662e5467c13630cfe98f9b99e720775d80b1) intends to fix exactly this problem.
