@@ -46,7 +46,7 @@ dc *options: test ensure-django-secret version-file
 
     docker compose {{ options }}
 
-dcu: (dc "up --build")
+dcu *options: (dc "up --build " + options)
 
 prod:
     export DJANGO_SETTINGS_MODULE=django_chess.prod_settings
