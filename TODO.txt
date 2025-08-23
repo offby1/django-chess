@@ -1,8 +1,6 @@
 IN PROGRESS
 
 TODO
-* See what, if anything, needs to be done to ensure the docker compose stack comes up automatically after I reboot the big host.
-  It looks like caddy automatically restarts; I wonder if it's as simple as adding `restart: unless-stopped` (caddy's compose file has that; mine doesn't).
 * Somehow animate the pieces moving.  It sounds hard, but [this site](https://www.chessgames.com/perl/chessgame?gid=1472881) does it.
 * Show the (two) collections of captured pieces.
 * If the last move put someone in check, note that somewhere!
@@ -12,6 +10,8 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* See what, if anything, needs to be done to ensure the docker compose stack comes up automatically after I reboot the big host.
+  It looks like caddy automatically restarts; I wonder if it's as simple as adding `restart: unless-stopped` (caddy's compose file has that; mine doesn't).
 * Automatically scroll the "moves" list to the end after the page loads.
   I thought I'd done this, but it's done wrong: it scrolls the entire page, thus (on mobile) pushing the board off the top; I want instead to *just* scroll the div that contains the individual moves.
 

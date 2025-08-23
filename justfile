@@ -1,6 +1,6 @@
 set unstable
 
-export COMPOSE_PROFILE := if env("DOCKER_CONTEXT", "") == "chess" { "prod" } else { "" }
+export COMPOSE_PROFILES := env("COMPOSE_PROFILES", if env("DOCKER_CONTEXT", "") == "chess" { "prod" } else { "" })
 DJANGO_SECRET_DIRECTORY := config_directory() / "info.offby1.chess"
 export DJANGO_SECRET_FILE := DJANGO_SECRET_DIRECTORY / "django_secret_key"
 export DJANGO_SETTINGS_MODULE := env("DJANGO_SETTINGS_MODULE", "django_chess.dev_settings")
@@ -42,7 +42,7 @@ dc *options: test ensure-django-secret version-file
     export CADDY_HOSTNAME=chess.offby1.info
     export DJANGO_SECRET_KEY=$(cat "${DJANGO_SECRET_FILE}")
 
-    echo COMPOSE_PROFILE is {{ COMPOSE_PROFILE }}
+    echo COMPOSE_PROFILES is {{ COMPOSE_PROFILES }}
 
     docker compose {{ options }}
 
