@@ -1,6 +1,7 @@
 IN PROGRESS
 
 TODO
+* At least for development convenience: allow saving and restoring games to a local file.  Maybe use pgn format.
 * Somehow animate the pieces moving.  It sounds hard, but [this site](https://www.chessgames.com/perl/chessgame?gid=1472881) does it.
 * Show the (two) collections of captured pieces.
 * If the last move put someone in check, note that somewhere!
