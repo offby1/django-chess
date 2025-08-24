@@ -2,11 +2,9 @@ FROM python:3.13-slim-bullseye AS python
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 RUN apt -y update
-RUN apt -y install gnuchess
+RUN apt -y install git gnuchess
 
 ENV PYTHONUNBUFFERED=t
-
-RUN adduser --disabled-password chess
 
 FROM python AS uv-install-django
 
@@ -14,8 +12,10 @@ COPY uv.lock pyproject.toml /chess/
 WORKDIR /chess
 RUN ["uv", "sync", "--no-dev"]
 
-FROM python AS app
+FROM python:3.13-slim-bullseye
+RUN adduser --disabled-password chess
 
+COPY --from=uv-install-django /bin/uv /bin/uvx /bin/
 COPY --from=uv-install-django /chess/ /chess/
 COPY django_chess/ /chess/django_chess/
 COPY manage.py start-daphne.sh /chess/
