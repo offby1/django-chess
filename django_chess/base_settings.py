@@ -29,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS: list[str] = [
     "chess.offby1.info",
     "localhost",
-    "penguin.tail571dc2.ts.net",
+    ".tail571dc2.ts.net",
 ]
 CSRF_TRUSTED_ORIGINS = ["https://*.tail571dc2.ts.net"]
 
