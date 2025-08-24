@@ -147,14 +147,24 @@ def move(request: HttpRequest, game_id: UUID | str) -> HttpResponse:
             result = engine.play(board, chess.engine.Limit(time=0))
 
             if result.move is not None:
-                game.promoting_push(board, result.move)
+                if result.move == chess.Move.null():
+                    # not sure what this means but I'm gonna assume Black is resigned, or checkmated, or something.
+                    game.in_progress = False
+                else:
+                    game.promoting_push(board, result.move)
                 save_board(board=board, game=game)
+
+                # TODO -- check result.resigned; dunno what to do if it's True though
     else:
         legal_moves = list(board.legal_moves)
         if legal_moves:
             random.shuffle(legal_moves)
             game.promoting_push(board, legal_moves[0])
             save_board(board=board, game=game)
+
+    if board.outcome() is not None:
+        game.in_progress = False
+        save_board(board=board, game=game)
 
     return HttpResponseRedirect(reverse("game", kwargs=dict(game_id=game_id)))
 
