@@ -14,8 +14,8 @@ demo: mypy
 manage *options:
     uv run python manage.py {{ options }}
 
-test: (manage "makemigrations") (manage "migrate") mypy
-    uv run pytest .
+test *options: (manage "makemigrations") (manage "migrate") mypy
+    uv run pytest {{ options }} .
 
 runme: test version-file (manage "runserver")
 
