@@ -48,6 +48,9 @@ dc *options: test ensure-django-secret version-file
 
 dcu *options: (dc "up --build " + options)
 
+[script('bash')]
 prod:
+    set -euo pipefail
+
     export DJANGO_SETTINGS_MODULE=django_chess.prod_settings
     DOCKER_CONTEXT=chess just dc up --build --detach
