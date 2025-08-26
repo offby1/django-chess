@@ -5,15 +5,24 @@
 {% block content %}
     <script async src="https://js.stripe.com/v3/buy-button.js"></script>
     <div id="make-that-button-bigger">
+        <h3>Games In Progress</h3>
+        <ul>
+            {% for g in in_progress_games %}
+                <li>
+                    <a href="{% url "game" game_id=g.pk %}">{{ g.pk }}</a>
+                </li>
+                {% endfor %}
+        </ul>
         <h3>Completed games</h3>
         <ul>
             {% for g in completed_games %}
                 <li>
                     <a href="{% url "game" game_id=g.pk %}">{{ g.pk }}</a>
                 </li>
-            {% endfor %}
+                {% endfor %}
         </ul>
         {% include "app/new-game-form.html" %}
+        {% include "app/import-pgn-form.html" %}
         <div id="stripe-buy-button">
             <stripe-buy-button buy-button-id="buy_btn_1RwtbAACKcztBNEZylsuxN2K" publishable-key="pk_live_51RwsWAACKcztBNEZql1nz6vlZCbKfU7KCXtzMdLJm6wvgPByGf7xU47v1TLgTFmuEncS7zV1mmvdLPaW3MPH7gq700LLOU0XO4">
             </stripe-buy-button>

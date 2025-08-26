@@ -33,6 +33,9 @@
                     <div id="white-captured-pieces">
                         {% for piece in captured_pieces.1 %}<div>{{ piece }}</div>{% endfor %}
                     </div>
+                <div>
+                    <a href="{% url 'pgn-game' game_id=game.pk %}">PGN</a>
+                </div>
                 </div>
             </div>
         </div>

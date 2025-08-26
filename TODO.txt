@@ -1,7 +1,9 @@
 IN PROGRESS
 
 TODO
-* At least for development convenience: allow saving and restoring games to a local file.  Maybe use pgn format.
+* Tweak the model so that each game has a "provenance" -- if it was uploaded from a PGN, then the name of the file, or perhaps some of the headers in the file; if played interactively, then perhaps the IP address of the client.
+  Then, of course, display that provenance on the game.html page.
+  Maybe store all the PGN headers as a JSON dict, and restore them when emitting a PGN from that game.
 * Somehow animate the pieces moving.  It sounds hard, but [this site](https://www.chessgames.com/perl/chessgame?gid=1472881) does it.
 * If the last move put someone in check, note that somewhere!
 * Make the items in the event log clickable -- they take you to the board's state at that point.  I imagine that display should be read-only, since I'm not yet prepared to keep a tree of history for each game.
@@ -10,6 +12,7 @@ TODO
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
 
 DONE
+* At least for development convenience: allow saving and restoring games to a local file.  Maybe use pgn format.
 * Show the (two) collections of captured pieces.
 * Dumb down Black even futher, by only invoking it on some moves, and choosing a random legal move otherwise.
 * See what, if anything, needs to be done to ensure the docker compose stack comes up automatically after I reboot the big host.

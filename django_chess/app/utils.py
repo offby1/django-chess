@@ -202,6 +202,10 @@ def sort_upper_left_first(
 
 def save_board(*, board: chess.Board, game: Game) -> None:
     game.moves = json.dumps([m.uci() for m in board.move_stack])
+
+    if board.outcome() is not None:
+        game.in_progress = False
+
     game.save()
 
 

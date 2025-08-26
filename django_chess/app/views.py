@@ -1,3 +1,6 @@
+import io
+import json
+import logging
 import os
 import pathlib
 import random
@@ -6,8 +9,10 @@ from uuid import UUID
 
 import chess
 import chess.engine
+import chess.pgn
 import chess.svg
 
+from django.core.files.uploadedfile import UploadedFile
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -19,6 +24,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
+from django_chess.app.forms import ImportPGNForm
 from django_chess.app.models import Game
 from django_chess.app.utils import (
     get_squares_none_selected,
@@ -27,6 +33,9 @@ from django_chess.app.utils import (
     save_board,
     sort_upper_left_first,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def _first_existing_executable(candidates: list[str]) -> pathlib.Path | None:
@@ -61,11 +70,14 @@ GNUCHESS_EXECUTABLE = _first_existing_executable(
 @require_http_methods(["GET"])
 def home(request: HttpRequest) -> HttpResponse:
     completed_games = Game.objects.filter(in_progress=False)
+    in_progress_games = Game.objects.filter(in_progress=True)
     return TemplateResponse(
         request,
         "app/home.html",
         context={
             "completed_games": completed_games,
+            "in_progress_games": in_progress_games,
+            "form": ImportPGNForm(),
             "num_games": Game.objects.count(),
         },
     )
@@ -115,6 +127,68 @@ def game(request: HttpRequest, game_id: UUID | str) -> HttpResponse:
         "app/game.html",
         context=context,
     )
+
+
+@require_http_methods(["GET"])
+def pgn_game(request: HttpRequest, game_id: UUID | str) -> HttpResponse:
+    board = load_board(game=get_object_or_404(Game, pk=game_id))
+    game = chess.pgn.Game.from_board(board)
+    exporter = chess.pgn.StringExporter(headers=True, variations=True, comments=True)
+    pgn_string = game.accept(exporter)
+
+    match request.get_preferred_type(["text/html", "text/plain"]):
+        case "text/plain":
+            return HttpResponse(pgn_string, content_type="text/plain")
+        case "text/html":
+            return HttpResponse(
+                pgn_string,
+                headers={
+                    "Content-Type": "text/plain",
+                    "Content-Disposition": f'attachment; filename="{game_id}.pgn"',
+                })
+        case _:
+            return HttpResponse("Sorry, we only serve text/plain and text/html here", status=400)
+
+
+@require_http_methods(["POST"])
+def import_pgn(request: HttpRequest) -> HttpResponse:
+    form = ImportPGNForm(request.POST, request.FILES)
+
+    if not form.is_valid():
+        return HttpResponse("Form isn't valid", status=400)
+
+    uploaded_file = request.FILES['imported_pgn']
+    if not isinstance(uploaded_file, UploadedFile):
+        return HttpResponse(
+            f"Sorry, but I don't know how to deal with {uploaded_file=} since it isn't an Uploaded_File",
+            status=400,
+        )
+
+    if (uploaded_file.size or 0) > 1_000_000: # semi-arbitrary; meant to prevent denial of service
+        return HttpResponse(f"{uploaded_file.size} bytes is too large for a PGN", status=400)
+
+    new_games = []
+    stringio = io.StringIO(uploaded_file.read().decode())
+
+    while True:
+        read_ = chess.pgn.read_game(stringio)
+
+        if read_ is None:
+            break
+
+        new_game = Game.objects.create()
+        new_game.moves = json.dumps([m.uci() for m in read_.mainline_moves()])
+        if read_.board().outcome() is not None:
+            new_game.in_progress = False
+        new_game.save()
+        new_games.append(new_game)
+
+    logger.info("Read %d games from %s", len(new_games), uploaded_file)
+
+    if len(new_games) == 1:
+        return HttpResponseRedirect(reverse("game", kwargs=dict(game_id=new_games[0].pk)))
+
+    return HttpResponseRedirect("/")
 
 
 def num_black_moves(board: chess.Board) -> int:
