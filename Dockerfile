@@ -15,6 +15,7 @@ RUN ["uv", "sync", "--no-dev"]
 FROM python:3.13-slim-bullseye
 RUN adduser --disabled-password chess
 
+COPY --from=python /usr/games /usr/games/
 COPY --from=uv-install-django /bin/uv /bin/uvx /bin/
 COPY --from=uv-install-django /chess/ /chess/
 COPY django_chess/ /chess/django_chess/
