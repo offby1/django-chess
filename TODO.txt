@@ -4,12 +4,14 @@ TODO
 * Tweak the model so that each game has a "provenance" -- if it was uploaded from a PGN, then the name of the file, or perhaps some of the headers in the file; if played interactively, then perhaps the IP address of the client.
   Then, of course, display that provenance on the game.html page.
   Maybe store all the PGN headers as a JSON dict, and restore them when emitting a PGN from that game.
-* Somehow animate the pieces moving.  It sounds hard, but [this site](https://www.chessgames.com/perl/chessgame?gid=1472881) does it.
+  Failing that, how about just a timestamp?
+* Somehow animate the pieces moving.  It sounds hard, but [this site](https://www.chessgames.com/perl/chessgame?gid=1472881) and [lichess.org](https://lichess.org/Cg80a2fc) do it.
 * If the last move put someone in check, note that somewhere!
 * Make the items in the event log clickable -- they take you to the board's state at that point.  I imagine that display should be read-only, since I'm not yet prepared to keep a tree of history for each game.
 * Sometimes it lets me click on a piece, and it highlights; but there are no legal moves.  WTF? I can't remember exactly how I got into this situation; I think I had the king in check and had clicked on some random faraway pawn.  It's not surprising that it has no legal moves, since the only legal moves are either "move the king out of danger", "capture the piece that's endangering the king", or "interpose a piece between the king and its attacker".
 
   I wonder if this relates to the distinction between "legal" and "pseudo-legal" that the chess library mentions 🤔
+* Let both White and Black be controllable: either side can be played by the human (clicking stuff on the web page) or the bot.
 
 DONE
 * At least for development convenience: allow saving and restoring games to a local file.  Maybe use pgn format.
