@@ -1,6 +1,8 @@
 IN PROGRESS
 
 TODO
+* Look into [Motion-Vue](https://workflowy.com/s/using-a-npm-package/oTup0EX0WArlNYvQ)
+* When I import a PGN file, if the file's name has a GUID in it, try to name the imported game after that GUID.
 * Tweak the model so that each game has a "provenance" -- if it was uploaded from a PGN, then the name of the file, or perhaps some of the headers in the file; if played interactively, then perhaps the IP address of the client.
   Then, of course, display that provenance on the game.html page.
   Maybe store all the PGN headers as a JSON dict, and restore them when emitting a PGN from that game.
