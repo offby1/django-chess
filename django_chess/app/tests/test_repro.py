@@ -5,8 +5,8 @@ import chess.engine
 import pytest
 
 from django_chess.app.models import Game
-from django_chess.app.views import GNUCHESS_EXECUTABLE
 from django_chess.app.tests import repro_moves
+from django_chess.app.views import GNUCHESS_EXECUTABLE
 
 
 @pytest.mark.django_db

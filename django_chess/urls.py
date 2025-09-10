@@ -1,7 +1,7 @@
+from debug_toolbar.toolbar import debug_toolbar_urls  # type: ignore [import-untyped]
 from django.contrib import admin
 from django.urls import path
 
-from debug_toolbar.toolbar import debug_toolbar_urls  # type: ignore [import-untyped]
 from django_chess.app import views
 
 urlpatterns = [
