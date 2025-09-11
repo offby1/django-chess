@@ -11,6 +11,9 @@ WORKDIR /code
 
 COPY requirements.txt /tmp/requirements.txt
 
+RUN apt -y update
+RUN apt -y install git gnuchess
+
 RUN set -ex && \
     pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
