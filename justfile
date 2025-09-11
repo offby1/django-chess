@@ -13,7 +13,11 @@ demo: mypy
 manage *options: pg-start
     uv run python manage.py {{ options }}
 
-test *options: (manage "makemigrations") (manage "migrate") mypy
+makemigrations: (manage "makemigrations")
+
+migrate: makemigrations (manage "migrate")
+
+test *options: migrate mypy
     uv run pytest {{ options }} .
 
 runme: test version-file (manage "runserver")
@@ -34,6 +38,15 @@ ensure-django-secret:
 version-file:
     uv run python generate-version-html.py > django_chess/app/templates/app/version.html
 
+[script('bash')]
 pg-start:
+    set -euo pipefail
+
     # TODO -- only run if nobody is already listening on 5432
-    docker run --detach -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17 || { echo "port is already allocated is OK; ctfo" ; true ; }
+    (
+    docker run --name postgres --detach -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17
+    sleep 2
+    ) || { echo "port is already allocated is OK; ctfo" ; true ; }
+
+pg-stop:
+    docker stop postgres
