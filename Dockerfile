@@ -28,5 +28,5 @@ USER chess
 WORKDIR /chess
 RUN mkdir /chess/data
 
-# Note that someone -- typically docker-compose -- needs to have run "collectstatic" and "migrate" first
+# Note that someone -- typically docker-compose -- needs to have run "migrate" first
 CMD ["bash", "./start-daphne.sh"]
