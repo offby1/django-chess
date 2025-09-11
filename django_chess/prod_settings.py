@@ -12,6 +12,9 @@ if os.environ.get("ON_FLYIO_SETUP") or os.environ.get("ON_FLYIO"):
     # from https://whitenoise.evans.io/en/stable/#quickstart-for-django-apps
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     STATIC_URL = "/static/"
+
+    STATICFILES_DIRS: list[str]
+
     try:
         STATICFILES_DIRS.append(os.path.join(BASE_DIR, "static"))
     except NameError:
@@ -27,7 +30,7 @@ if os.environ.get("ON_FLYIO"):
     #   the setup process.
     # The `dj_database_url.parse()` call causes the build to fail; other settings
     #   here may not.
-    import dj_database_url
+    import dj_database_url      # type: ignore [import-not-found]
 
     # Use secret, if set, to update DEBUG value.
     if os.environ.get("DEBUG") == "FALSE":
