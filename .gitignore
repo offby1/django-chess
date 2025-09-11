@@ -10,3 +10,5 @@ wheels/
 .venv
 /db.sqlite3
 /.dmypy.json
+
+dsd_logs/
