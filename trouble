@@ -1,0 +1,375 @@
+at 2025-09-11T13:41:38-05:00 ❌130  ❯ just manage deploy
+postgres
+uv run python manage.py deploy
+Configuring project for deployment...
+Logging run of `manage.py deploy`...
+Logging run of `manage.py deploy`...
+Created /Users/not-workme/git-repositories/me/django-chess/dsd_logs/dsd_2025-09-11-184143.log.
+Created /Users/not-workme/git-repositories/me/django-chess/dsd_logs/dsd_2025-09-11-184143.log.
+
+CLI args:
+  verbosity: 1
+  settings: None
+  pythonpath: None
+  traceback: False
+  no_color: False
+  force_color: False
+  automate_all: False
+  no_logging: False
+  ignore_unclean_git: False
+  deployed_project_name:
+  region: us-3.platform.sh
+  unit_testing: False
+  e2e_testing: False
+  Using plugin: dsd_flyio
+  Using plugin: dsd_flyio
+
+Deployment target: Fly.io
+
+Deployment target: Fly.io
+Local platform identified: macOS
+Local project name: django_chess
+Project root: /Users/not-workme/git-repositories/me/django-chess
+Found .git dir at /Users/not-workme/git-repositories/me/django-chess.
+Found .git dir at /Users/not-workme/git-repositories/me/django-chess.
+
+git status --porcelain
+
+git diff --unified=0
+
+No uncommitted changes, other than django-simple-deploy work.
+No uncommitted changes, other than django-simple-deploy work.
+Dependency management system: req_txt
+Dependency management system: req_txt
+Checking current project requirements...
+Checking current project requirements...
+  Found existing dependencies:
+  Found existing dependencies:
+    asgiref
+    asgiref
+    attrs
+    attrs
+    autobahn
+    autobahn
+    automat
+    automat
+    cffi
+    cffi
+    chess
+    chess
+    constantly
+    constantly
+    cryptography
+    cryptography
+    daphne
+    daphne
+    django
+    django
+    django-debug-toolbar
+    django-debug-toolbar
+    hyperlink
+    hyperlink
+    idna
+    idna
+    incremental
+    incremental
+    pyasn1
+    pyasn1
+    pyasn1-modules
+    pyasn1-modules
+    pycparser
+    pycparser
+    pyopenssl
+    pyopenssl
+    service-identity
+    service-identity
+    setuptools
+    setuptools
+    sqlparse
+    sqlparse
+    twisted
+    twisted
+    txaio
+    txaio
+    typing-extensions
+    typing-extensions
+    zope-interface
+    zope-interface
+    django-simple-deploy
+    django-simple-deploy
+
+Looking for django-simple-deploy in requirements...
+
+Looking for django-simple-deploy in requirements...
+
+Looking for django-simple-deploy...
+
+Looking for django-simple-deploy...
+  Found django-simple-deploy in requirements file.
+  Found django-simple-deploy in requirements file.
+
+Configuring project for deployment to Fly.io...
+
+Configuring project for deployment to Fly.io...
+No Fly.io-specific settings block found.
+
+fly version
+fly v0.3.178 darwin/arm64 Commit: a9d85fff0a6182ab5b74d02b4d7c7f01856fe243 BuildDate: 2025-09-10T14:09:00Z
+
+fly auth whoami --json
+  Logged in to Fly.io CLI as: eric.hanchrow@gmail.com
+  Logged in to Fly.io CLI as: eric.hanchrow@gmail.com
+
+Looking for Fly.io app to deploy against...
+
+Looking for Fly.io app to deploy against...
+
+fly apps list --json
+[
+    {
+        "ID": "silent-hill-7348",
+        "InternalNumericID": 0,
+        "Name": "silent-hill-7348",
+        "State": "",
+        "Status": "pending",
+        "Deployed": false,
+        "Hostname": "silent-hill-7348.fly.dev",
+        "AppURL": "",
+        "Version": 0,
+        "NetworkID": 0,
+        "Network": "",
+        "Release": null,
+        "Organization": {
+            "ID": "",
+            "InternalNumericID": "",
+            "Name": "Eric Hanchrow",
+            "RemoteBuilderImage": "",
+            "RemoteBuilderApp": null,
+            "Slug": "personal",
+            "RawSlug": "",
+            "Type": "",
+            "PaidPlan": false,
+            "Billable": false,
+            "Settings": null,
+            "Domains": {
+                "Nodes": null,
+                "Edges": null
+            },
+            "WireGuardPeer": null,
+            "WireGuardPeers": {
+                "Nodes": null,
+                "Edges": null
+            },
+            "DelegatedWireGuardTokens": {
+                "Nodes": null,
+                "Edges": null
+            },
+            "LoggedCertificates": null,
+            "LimitedAccessTokens": null
+        },
+        "Secrets": null,
+        "CurrentRelease": null,
+        "Releases": {
+            "Nodes": null
+        },
+        "IPAddresses": {
+            "Nodes": null
+        },
+        "SharedIPAddress": "",
+        "CNAMETarget": "",
+        "IPAddress": null,
+        "Certificates": {
+            "Nodes": null
+        },
+        "Certificate": {
+            "ID": "",
+            "AcmeDNSConfigured": false,
+            "AcmeALPNConfigured": false,
+            "Configured": false,
+            "CertificateAuthority": "",
+            "CreatedAt": "0001-01-01T00:00:00Z",
+            "DNSProvider": "",
+            "DNSValidationInstructions": "",
+            "DNSValidationHostname": "",
+            "DNSValidationTarget": "",
+            "Hostname": "",
+            "Source": "",
+            "ClientStatus": "",
+            "IsApex": false,
+            "IsWildcard": false,
+            "Issued": {
+                "Nodes": null
+            }
+        },
+        "PostgresAppRole": null,
+        "Image": null,
+        "ImageUpgradeAvailable": false,
+        "ImageVersionTrackingEnabled": false,
+        "ImageDetails": {
+            "Registry": "",
+            "Repository": "",
+            "Tag": "",
+            "Version": "",
+            "Digest": ""
+        },
+        "LatestImageDetails": {
+            "Registry": "",
+            "Repository": "",
+            "Tag": "",
+            "Version": "",
+            "Digest": ""
+        },
+        "PlatformVersion": "machines",
+        "LimitedAccessTokens": null,
+        "Machines": {
+            "Nodes": null
+        },
+        "CurrentLock": null
+    }
+]
+
+*** Found one undeployed app on Fly.io: silent-hill-7348 ***
+
+*** Found one undeployed app on Fly.io: silent-hill-7348 ***
+
+Is this the app you want to deploy to? (yes|no)
+
+Is this the app you want to deploy to? (yes|no)
+yes
+yes
+  Using Fly.io app: silent-hill-7348
+  Using Fly.io app: silent-hill-7348
+Looking for a Postgres database...
+Looking for a Postgres database...
+
+fly postgres list --json
+No postgres clusters found
+Looking for Fly.io region...
+Looking for Fly.io region...
+Starting new HTTPS connection (1): liveview-counter.fly.dev:443
+https://liveview-counter.fly.dev:443 "GET / HTTP/1.1" 200 None
+  Found lowest latency region: ord
+  Found lowest latency region: ord
+  Creating a new Postgres database...
+  Creating a new Postgres database...
+
+A Postgres database is required to continue with deployment. If you confirm this,
+the following command will be run, to create a new database on your account:
+$ fly postgres create --name silent-hill-7348-db --region ord --initial-cluster-size 1 --vm-size shared-cpu-1x --volume-size 1
+
+Are you sure you want to do this? (yes|no)
+
+Are you sure you want to do this? (yes|no)
+yes
+yes
+  Creating database...
+fly postgres create --name silent-hill-7348-db --region ord --initial-cluster-size 1 --vm-size shared-cpu-1x --volume-size 1
+
+Unmanaged Fly Postgres is not supported by Fly.io Support and users are responsible for operations, management, and disaster recovery. If you'd like a managed, supported solution, try 'fly mpg' (Managed Postgres).
+Please visit https://fly.io/docs/mpg/overview/ for more information about Managed Postgres.
+
+automatically selected personal organization: Eric Hanchrow
+Creating postgres cluster in organization personal
+Creating app...
+Setting secrets on app silent-hill-7348-db...
+Provisioning 1 of 1 machines with image flyio/postgres-flex:17.2@sha256:f4301ae20d193ab3c3539eb9df9a8f8d3736dd331aeec1bfb2e34b539dc353c5
+Waiting for machine to start...
+Machine 48e2d64a112018 is created
+==> Monitoring health checks
+  Waiting for 48e2d64a112018 to become healthy (started, 2/3)
+
+Postgres cluster silent-hill-7348-db created
+  Username:    postgres
+  Password:    REDACTED_YO
+  Hostname:    silent-hill-7348-db.internal
+  Flycast:     fdaa:2c:90b0:0:1::2
+  Proxy port:  5432
+  Postgres port:  5433
+  Connection string: postgres://postgres:REDACTED_YO@silent-hill-7348-db.flycast:5432
+
+Save your credentials in a secure place -- you won't be able to see them again!
+
+Connect to postgres
+Any app within the Eric Hanchrow organization can connect to this Postgres using the above connection string
+
+  Waiting for 48e2d64a112018 to become healthy (started, 3/3)
+  Created Postgres database.
+  Created Postgres database.
+  Attaching database to Fly.io app...
+  Attaching database to Fly.io app...
+
+fly postgres attach --app silent-hill-7348 silent-hill-7348-db
+Checking for existing attachments
+Registering attachment
+Creating database
+Creating user
+
+Postgres cluster silent-hill-7348-db is now attached to silent-hill-7348
+The following secret was added to silent-hill-7348:
+  DATABASE_URL=postgres://silent_hill_7348:REDACTED_YO@silent-hill-7348-db.flycast:5432/silent_hill_7348?sslmode=disable
+Checking for existing attachments
+Registering attachment
+Creating database
+Creating user
+
+Postgres cluster silent-hill-7348-db is now attached to silent-hill-7348
+The following secret was added to silent-hill-7348:
+  Attached database to app.
+  Attached database to app.
+
+Setting ON_FLYIO secret...
+
+Setting ON_FLYIO secret...
+
+fly secrets list -a silent-hill-7348 --json
+Traceback (most recent call last):
+  File "/Users/not-workme/git-repositories/me/django-chess/manage.py", line 23, in <module>
+    main()
+    ~~~~^^
+  File "/Users/not-workme/git-repositories/me/django-chess/manage.py", line 19, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/core/management/__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/core/management/__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/core/management/base.py", line 416, in run_from_argv
+    self.execute(*args, **cmd_options)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django/core/management/base.py", line 460, in execute
+    output = self.handle(*args, **options)
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/django_simple_deploy/management/commands/deploy.py", line 149, in handle
+    pm.hook.dsd_deploy()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/pluggy/_callers.py", line 167, in _multicall
+    raise exception
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/dsd_flyio/deploy.py", line 27, in dsd_deploy
+    platform_deployer.deploy()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/dsd_flyio/platform_deployer.py", line 51, in deploy
+    self._set_env_vars()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/dsd_flyio/platform_deployer.py", line 103, in _set_env_vars
+    self._set_on_flyio()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/dsd_flyio/platform_deployer.py", line 112, in _set_on_flyio
+    self._set_secret("ON_FLYIO", "ON_FLYIO=1")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/not-workme/git-repositories/me/django-chess/.venv/lib/python3.13/site-packages/dsd_flyio/platform_deployer.py", line 244, in _set_secret
+    secrets_keys = [secret["Name"] for secret in secrets_json]
+                    ~~~~~~^^^^^^^^
+KeyError: 'Name'
+error: Recipe `manage` failed on line 14 with exit code 1
+
+django-chess on  django-simple-deploy via 🐍 v3.13.7 took 42s
+at 2025-09-11T13:42:25-05:00 ❌1  ❯
