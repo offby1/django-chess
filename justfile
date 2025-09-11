@@ -10,7 +10,7 @@ mypy:
 demo: mypy
     uv run python main.py
 
-manage *options:
+manage *options: pg-start
     uv run python manage.py {{ options }}
 
 test *options: (manage "makemigrations") (manage "migrate") mypy
@@ -33,3 +33,7 @@ ensure-django-secret:
 [private]
 version-file:
     uv run python generate-version-html.py > django_chess/app/templates/app/version.html
+
+pg-start:
+    # TODO -- only run if nobody is already listening on 5432
+    docker run --detach -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17

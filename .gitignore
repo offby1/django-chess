@@ -12,3 +12,4 @@ wheels/
 /.dmypy.json
 
 dsd_logs/
+/postgres_data/

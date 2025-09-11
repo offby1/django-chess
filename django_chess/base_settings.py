@@ -84,9 +84,12 @@ TEMPLATES = [
 SQLITE_DATA_DIR = Path(os.environ.get("SQLITE_DATA_DIR", BASE_DIR))
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": SQLITE_DATA_DIR / "db.sqlite3",
-    }
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": os.environ.get("PGHOST", "localhost"),
+        "NAME": "chess",
+        "PASSWORD": os.environ.get("PGPASS", "postgres"),
+        "USER": os.environ.get("PGUSER", "postgres"),
+    },
 }
 
 
