@@ -39,18 +39,24 @@ version-file:
     uv run python generate-version-html.py > django_chess/app/templates/app/version.html
 
 nuke: pg-stop
-    docker rm postgres
+    docker rm postgres || true
     git clean --interactive -dx
 
 [script('bash')]
-pg-start:
+pg-create-container:
     set -euo pipefail
 
-    # TODO -- only run if nobody is already listening on 5432
-    (
-    docker run --name postgres --detach -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17
-    sleep 2
-    ) || { echo "port is already allocated is OK; ctfo" ; true ; }
+    if [ -z $(docker ps  --filter "name=postgres" --quiet --all) ]
+    then
+      docker create --name postgres -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17
+    fi
+
+
+[script('bash')]
+pg-start: pg-create-container
+    set -euo pipefail
+
+    docker container start postgres
 
 pg-stop:
-    docker stop postgres
+    docker stop postgres || true
