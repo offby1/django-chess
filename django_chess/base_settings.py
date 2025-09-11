@@ -83,12 +83,14 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+_database_url_default = f"postgres://{os.environ.get('PGUSER', 'postgres')}:{os.environ.get('PGPASS', 'postgres')}@{os.environ.get('PGHOST', 'localhost')}/chess"
+print(f"{_database_url_default=}")
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"postgres://{os.environ.get('PGUSER', 'postgres')}:{os.environ.get('PGPASS', 'postgres')}@{os.environ.get('PGHOST', 'localhost')}/chess",
+        default=_database_url_default,
     ),
 }
-
+print(f"{DATABASES['default']=}")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
