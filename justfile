@@ -38,6 +38,10 @@ ensure-django-secret:
 version-file:
     uv run python generate-version-html.py > django_chess/app/templates/app/version.html
 
+nuke: pg-stop
+    docker rm postgres
+    git clean --interactive -dx
+
 [script('bash')]
 pg-start:
     set -euo pipefail
