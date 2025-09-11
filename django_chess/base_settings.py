@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -81,15 +83,10 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-SQLITE_DATA_DIR = Path(os.environ.get("SQLITE_DATA_DIR", BASE_DIR))
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "HOST": os.environ.get("PGHOST", "localhost"),
-        "NAME": "chess",
-        "PASSWORD": os.environ.get("PGPASS", "postgres"),
-        "USER": os.environ.get("PGUSER", "postgres"),
-    },
+    "default": dj_database_url.config(
+        default=f"postgres://{os.environ.get('PGUSER', 'postgres')}:{os.environ.get('PGPASS', 'postgres')}@{os.environ.get('PGHOST', 'localhost')}/chess",
+    ),
 }
 
 

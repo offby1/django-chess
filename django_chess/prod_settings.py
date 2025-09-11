@@ -30,7 +30,7 @@ if os.environ.get("ON_FLYIO"):
     #   the setup process.
     # The `dj_database_url.parse()` call causes the build to fail; other settings
     #   here may not.
-    import dj_database_url      # type: ignore [import-not-found]
+    import dj_database_url  # type: ignore [import-not-found]
 
     # Use secret, if set, to update DEBUG value.
     if os.environ.get("DEBUG") == "FALSE":
@@ -43,6 +43,7 @@ if os.environ.get("ON_FLYIO"):
 
     # Use the Fly.io Postgres database.
     db_url = os.environ.get("DATABASE_URL")
+    print(f"{__file__} says {db_url=}")
     DATABASES["default"] = dj_database_url.parse(db_url)
 
     # Prevent CSRF "Origin checking failed" issue.
