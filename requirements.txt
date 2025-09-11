@@ -72,3 +72,8 @@ zope-interface==7.2
     # via twisted
 
 django-simple-deploy==1.1.0
+
+gunicorn
+psycopg2-binary
+dj-database-url
+whitenoise
