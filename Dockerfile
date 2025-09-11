@@ -21,8 +21,6 @@ RUN set -ex && \
 
 COPY . /code/
 
-RUN ON_FLYIO_SETUP="1" python manage.py collectstatic --noinput
-
 EXPOSE 8000
 
 CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "django_chess.wsgi"]
