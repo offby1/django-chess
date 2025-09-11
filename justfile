@@ -36,4 +36,4 @@ version-file:
 
 pg-start:
     # TODO -- only run if nobody is already listening on 5432
-    docker run --detach -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17
+    docker run --detach -e POSTGRES_DB=chess -e POSTGRES_PASSWORD=postgres --publish 5432:5432 -v ./postgres_data:/var/lib/postgresql/data postgres:17 || { echo "port is already allocated is OK; ctfo" ; true ; }
