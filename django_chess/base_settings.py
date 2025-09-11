@@ -39,6 +39,7 @@ CSRF_TRUSTED_ORIGINS = ["https://*.tail571dc2.ts.net"]
 INSTALLED_APPS = [
     "debug_toolbar",
     "django_chess.app",
+    "django_simple_deploy",     # TODO -- should I only do this in prod_settings?
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
