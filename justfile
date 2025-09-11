@@ -13,7 +13,7 @@ demo: mypy
 manage *options: pg-start
     uv run python manage.py {{ options }}
 
-makemigrations: (manage "makemigrations")
+makemigrations: (manage "makemigrations app")
 
 migrate: makemigrations (manage "migrate")
 
