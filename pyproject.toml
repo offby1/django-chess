@@ -15,7 +15,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "django-simple-deploy[fly-io]>=1.1.0",
+    "django-simple-deploy[fly-io]>=1.1.1",
     "django-stubs[compatible-mypy]>=5.2.2",
     "mypy>=1.17.1",
     "pytest-django>=4.11.1",
