@@ -10,7 +10,6 @@ from uuid import UUID
 import chess
 import chess.engine
 import chess.pgn
-import chess.svg
 
 from django.core.files.uploadedfile import UploadedFile
 from django.http import (
