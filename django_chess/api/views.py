@@ -1,12 +1,15 @@
+from typing import Any
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from django_chess.app.models import Game
 from django_chess.api.serializers import GameListSerializer
 
 
-class GameViewSet(viewsets.ReadOnlyModelViewSet):
+class GameViewSet(viewsets.ReadOnlyModelViewSet[Game]):
     """
     ViewSet for game operations.
 
@@ -17,7 +20,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Game.objects.all().order_by('-id')
     serializer_class = GameListSerializer
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
         Return games grouped by status: in_progress and completed.
         """

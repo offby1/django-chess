@@ -6,7 +6,7 @@ from django_chess.app.models import Game
 from django_chess.app.utils import load_board
 
 
-class GameListSerializer(serializers.ModelSerializer):
+class GameListSerializer(serializers.ModelSerializer[Game]):
     """Lightweight serializer for listing games."""
 
     move_count = serializers.SerializerMethodField()
