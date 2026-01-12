@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from debug_toolbar.toolbar import debug_toolbar_urls  # type: ignore [import-untyped]
 from django_chess.app import views
@@ -17,4 +17,7 @@ urlpatterns = [
     path(
         "set-black-smartness/<uuid:game_id>/", views.set_black_smartness, name="set-black-smartness"
     ),
+
+    # REST API
+    path("api/", include("django_chess.api.urls")),
 ] + debug_toolbar_urls()
