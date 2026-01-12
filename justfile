@@ -14,8 +14,14 @@ demo: mypy
 manage *options:
     uv run python manage.py {{ options }}
 
-test *options: (manage "makemigrations") (manage "migrate") mypy
+[private]
+_test-deps: (manage "makemigrations") (manage "migrate") mypy
+
+test *options: _test-deps
     uv run pytest {{ options }} .
+
+cover *options: _test-deps
+    uv run pytest --cov=django_chess --cov-report=html --cov-report=term {{ options }} .
 
 runme: test version-file (manage "runserver")
 
