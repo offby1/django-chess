@@ -66,3 +66,21 @@ prod:
 
     export DJANGO_SETTINGS_MODULE=django_chess.prod_settings
     DOCKER_CONTEXT=chess just dc up --build --detach
+
+[script('bash')]
+backup:
+    set -euo pipefail
+
+    echo "Creating safe backup of production database..."
+
+    # Use Python's sqlite3 module to safely copy the live database with VACUUM INTO
+    DOCKER_CONTEXT=chess docker compose cp ./backup_db.py django:/chess/backup_db.py
+    DOCKER_CONTEXT=chess docker compose exec -T django uv run --no-dev python /chess/backup_db.py
+
+    echo "Copying backup from container..."
+    DOCKER_CONTEXT=chess docker compose cp django:/chess/data/backup.db ./db.sqlite3
+
+    echo "Cleaning up..."
+    DOCKER_CONTEXT=chess docker compose exec -T django rm /chess/data/backup.db /chess/backup_db.py
+
+    echo "Production database backed up to ./db.sqlite3"
