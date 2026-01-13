@@ -17,8 +17,8 @@ class GameListSerializer(serializers.ModelSerializer[Game]):
 
     class Meta:
         model = Game
-        fields = ['id', 'in_progress', 'move_count', 'black_smartness', 'whose_turn', 'outcome']
-        read_only_fields = ['id', 'move_count', 'whose_turn', 'outcome']
+        fields = ['id', 'name', 'in_progress', 'move_count', 'black_smartness', 'whose_turn', 'outcome']
+        read_only_fields = ['id', 'name', 'move_count', 'whose_turn', 'outcome']
 
     def get_move_count(self, obj: Game) -> int:
         """Return the number of moves made in the game."""
@@ -67,11 +67,11 @@ class GameDetailSerializer(serializers.ModelSerializer[Game]):
     class Meta:
         model = Game
         fields = [
-            'id', 'in_progress', 'move_uci', 'move_san', 'black_smartness',
+            'id', 'name', 'in_progress', 'move_uci', 'move_san', 'black_smartness',
             'board_fen', 'whose_turn', 'legal_moves', 'captured_pieces', 'outcome'
         ]
         read_only_fields = [
-            'id', 'move_uci', 'move_san', 'board_fen', 'whose_turn',
+            'id', 'name', 'move_uci', 'move_san', 'board_fen', 'whose_turn',
             'legal_moves', 'captured_pieces', 'outcome'
         ]
 
@@ -140,8 +140,8 @@ class CreateGameSerializer(serializers.ModelSerializer[Game]):
 
     class Meta:
         model = Game
-        fields = ['id', 'black_smartness']
-        read_only_fields = ['id']
+        fields = ['id', 'name', 'black_smartness']
+        read_only_fields = ['id', 'name']
 
     def validate_black_smartness(self, value: int) -> int:
         """Validate AI difficulty is in valid range."""
