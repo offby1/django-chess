@@ -1,5 +1,3 @@
-import random
-
 import chess
 import chess.engine
 
