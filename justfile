@@ -20,8 +20,14 @@ _test-deps: (manage "makemigrations") (manage "migrate") mypy
 test *options: _test-deps
     uv run pytest {{ options }} .
 
+[script('bash')]
 cover *options: _test-deps
-    uv run pytest --cov=django_chess --cov-report=html --cov-report=term {{ options }} .
+    set -euox pipefail
+    cd django_chess
+    pytest_exe={{ justfile_dir() }}/.venv/bin/pytest
+    uv run coverage run --rcfile={{ justfile_dir() }}/pyproject.toml --branch {{ options }} ${pytest_exe}
+    uv run coverage html --show-contexts
+    echo "Open $(pwd)/htmlcov/index.html" to see the report
 
 runme: test version-file (manage "runserver")
 
