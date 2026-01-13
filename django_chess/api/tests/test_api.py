@@ -297,7 +297,7 @@ def test_api_list_games_response_structure(api_client: APIClient, sample_game: G
 
     # Check game object structure
     game_data = data["in_progress"][0]
-    expected_fields = {"id", "in_progress", "move_count", "black_smartness", "whose_turn", "outcome"}
+    expected_fields = {"id", "name", "in_progress", "move_count", "black_smartness", "whose_turn", "outcome"}
     assert set(game_data.keys()) == expected_fields
 
 
@@ -696,3 +696,54 @@ def test_api_delete_completed_game(api_client: APIClient, completed_game: Game) 
 
     assert response.status_code == 204
     assert not Game.objects.filter(id=game_id).exists()
+
+
+@pytest.mark.django_db
+def test_games_have_unique_names() -> None:
+    """Test that newly created games have unique names."""
+    # Create multiple games
+    games = [Game.objects.create(black_smartness=5) for _ in range(10)]
+    
+    # Get all names
+    names = [game.name for game in games]
+    
+    # Verify all names are non-empty
+    assert all(names), "All games should have names"
+    
+    # Verify all names are unique
+    assert len(names) == len(set(names)), f"Game names should be unique, but got duplicates: {names}"
+    
+    # Clean up
+    for game in games:
+        game.delete()
+
+
+@pytest.mark.django_db
+def test_game_name_in_list_response(api_client: APIClient, sample_game: Game) -> None:
+    """Test that game name appears in list API response."""
+    response = api_client.get("/api/games/")
+    
+    assert response.status_code == 200
+    data = response.json()
+    
+    # Find our game in the response
+    all_games = data["in_progress"] + data["completed"]
+    our_game = next((g for g in all_games if g["id"] == str(sample_game.id)), None)
+    
+    assert our_game is not None, "Sample game should appear in response"
+    assert "name" in our_game, "Game should have a name field"
+    assert our_game["name"], "Game name should not be empty"
+    assert our_game["name"] == sample_game.name, "API should return the correct game name"
+
+
+@pytest.mark.django_db
+def test_game_name_in_detail_response(api_client: APIClient, sample_game: Game) -> None:
+    """Test that game name appears in detail API response."""
+    response = api_client.get(f"/api/games/{sample_game.id}/")
+    
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert "name" in data, "Game detail should have a name field"
+    assert data["name"], "Game name should not be empty"
+    assert data["name"] == sample_game.name, "API should return the correct game name"
