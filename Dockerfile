@@ -28,5 +28,8 @@ USER chess
 WORKDIR /chess
 RUN mkdir /chess/data
 
+# Collect static files
+RUN uv run --no-dev python manage.py collectstatic --noinput
+
 # Note that someone -- typically docker-compose -- needs to have run "migrate" first
 CMD ["bash", "./start-daphne.sh"]

@@ -16,3 +16,4 @@ wheels/
 htmlcov/
 .coverage
 .coverage.*
+staticfiles/
