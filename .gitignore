@@ -10,3 +10,9 @@ wheels/
 .venv
 /db.sqlite3
 /.dmypy.json
+/.claude/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*

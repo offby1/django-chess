@@ -1,10 +1,11 @@
 {% extends "app/base.html" %}
 {% block title %}
-    Game {{ game.pk }}
+    {{ game.name }}
 {% endblock title %}
 {% block content %}
     <div id="top">
-        {% if outcome %}Game {{ game.pk }}'s outcome was {{ outcome }}{% endif %}
+        <h1>{{ game.name }}</h1>
+        {% if outcome %}<strong>{{ game.name }}</strong>'s outcome was {{ outcome }}{% endif %}
         {% if not outcome %}
             {% if whose_turn == "white" %}
                 <form id="move"

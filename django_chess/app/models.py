@@ -3,10 +3,12 @@ import uuid
 import chess
 
 from django.db import models
+from django_chess.name_generator import generate_game_name
 
 
 class Game(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, default=generate_game_name)
     in_progress = models.BooleanField(default=True)
     moves = models.CharField(null=True) # JSON list of UCI strings
     black_smartness = models.PositiveSmallIntegerField(default=10)
