@@ -9,7 +9,7 @@
         <ul>
             {% for g in in_progress_games %}
                 <li>
-                    <a href="{% url "game" game_id=g.pk %}">{{ g.pk }}</a>
+                    <a href="{% url "game" game_id=g.pk %}">{{ g.name }}</a>
                 </li>
                 {% endfor %}
         </ul>
@@ -17,7 +17,7 @@
         <ul>
             {% for g in completed_games %}
                 <li>
-                    <a href="{% url "game" game_id=g.pk %}">{{ g.pk }}</a>
+                    <a href="{% url "game" game_id=g.pk %}">{{ g.name }}</a>
                 </li>
                 {% endfor %}
         </ul>
