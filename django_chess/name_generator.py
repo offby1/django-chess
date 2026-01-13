@@ -21,29 +21,36 @@ NOUNS = [
 ]
 
 
-def generate_game_name() -> str:
+def generate_game_name(seed: int | None = None) -> str:
     """
     Generate a human-readable game name from 3-4 random words.
 
     Format: [Adjective] [Color] [Noun] or [Adjective] [Adjective] [Noun]
+
+    Args:
+        seed: Optional seed for random number generator. If provided, the same
+              seed will always generate the same name (useful for game UUIDs).
 
     Examples:
     - "brave golden dragon"
     - "clever swift eagle"
     - "gentle blue dolphin"
     """
+    # Create a new random instance to avoid affecting global state
+    rng = random.Random(seed)
+
     # 50% chance of including a color, otherwise use two adjectives
-    if random.random() < 0.5:
+    if rng.random() < 0.5:
         parts = [
-            random.choice(ADJECTIVES),
-            random.choice(COLORS),
-            random.choice(NOUNS)
+            rng.choice(ADJECTIVES),
+            rng.choice(COLORS),
+            rng.choice(NOUNS)
         ]
     else:
         parts = [
-            random.choice(ADJECTIVES),
-            random.choice(ADJECTIVES),
-            random.choice(NOUNS)
+            rng.choice(ADJECTIVES),
+            rng.choice(ADJECTIVES),
+            rng.choice(NOUNS)
         ]
 
     return " ".join(parts)
