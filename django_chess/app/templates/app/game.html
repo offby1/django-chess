@@ -4,6 +4,7 @@
 {% endblock title %}
 {% block content %}
     <div id="top">
+        <h1>{{ game.name }}</h1>
         {% if outcome %}<strong>{{ game.name }}</strong>'s outcome was {{ outcome }}{% endif %}
         {% if not outcome %}
             {% if whose_turn == "white" %}
