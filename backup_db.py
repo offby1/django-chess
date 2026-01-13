@@ -4,7 +4,7 @@
 import sqlite3
 import sys
 
-def main():
+def main() -> None:
     db_path = sys.argv[1] if len(sys.argv) > 1 else '/chess/data/db.sqlite3'
     backup_path = sys.argv[2] if len(sys.argv) > 2 else '/chess/data/backup.db'
 

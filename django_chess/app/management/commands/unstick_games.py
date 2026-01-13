@@ -9,7 +9,7 @@ from django_chess.api.views import get_black_move
 class Command(BaseCommand):
     help = "Make AI moves for games stuck on black's turn"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:  # type: ignore[no-untyped-def]
         parser.add_argument(
             '--game-id',
             type=str,
@@ -21,7 +21,7 @@ class Command(BaseCommand):
             help='Show what would be done without making changes',
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:  # type: ignore[no-untyped-def]
         # Find games where it's black's turn
         games_query = Game.objects.filter(in_progress=True)
 
