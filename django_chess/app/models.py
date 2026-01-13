@@ -13,7 +13,7 @@ class Game(models.Model):
     moves = models.CharField(null=True) # JSON list of UCI strings
     black_smartness = models.PositiveSmallIntegerField(default=10)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: object, **kwargs: object) -> None:
         # Generate name from UUID on first save if not provided
         if not self.name:
             # Use UUID's integer representation as seed for deterministic names
