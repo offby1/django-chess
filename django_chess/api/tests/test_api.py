@@ -185,27 +185,20 @@ def test_api_list_empty_games(api_client: APIClient) -> None:
 
     assert response.status_code == 200
     data = response.json()
-    assert "in_progress" in data
-    assert "completed" in data
-    assert data["in_progress"] == []
-    assert data["completed"] == []
+    assert isinstance(data, list)
+    assert data == []
 
 
 @pytest.mark.django_db
 def test_api_list_in_progress_games(api_client: APIClient, sample_game: Game) -> None:
-    """Test listing games with only in-progress games."""
+    """Test listing games with only in-progress games (should return empty list)."""
     response = api_client.get("/api/games/")
 
     assert response.status_code == 200
     data = response.json()
-    assert len(data["in_progress"]) == 1
-    assert len(data["completed"]) == 0
-
-    game_data = data["in_progress"][0]
-    assert game_data["id"] == str(sample_game.id)
-    assert game_data["in_progress"] is True
-    assert game_data["move_count"] == 4
-    assert game_data["black_smartness"] == 7
+    # In-progress games should not appear in the list
+    assert isinstance(data, list)
+    assert len(data) == 0
 
 
 @pytest.mark.django_db
@@ -215,10 +208,10 @@ def test_api_list_completed_games(api_client: APIClient, completed_game: Game) -
 
     assert response.status_code == 200
     data = response.json()
-    assert len(data["in_progress"]) == 0
-    assert len(data["completed"]) == 1
+    assert isinstance(data, list)
+    assert len(data) == 1
 
-    game_data = data["completed"][0]
+    game_data = data[0]
     assert game_data["id"] == str(completed_game.id)
     assert game_data["in_progress"] is False
     assert game_data["move_count"] == 7
@@ -228,7 +221,7 @@ def test_api_list_completed_games(api_client: APIClient, completed_game: Game) -
 def test_api_list_mixed_games(
     api_client: APIClient, sample_game: Game, completed_game: Game
 ) -> None:
-    """Test listing games with both in-progress and completed games."""
+    """Test listing games with both in-progress and completed games (only completed returned)."""
     # Create additional games
     game2 = Game.objects.create(black_smartness=3)
     game2.moves = json.dumps(["d2d4"])
@@ -242,61 +235,64 @@ def test_api_list_mixed_games(
 
     assert response.status_code == 200
     data = response.json()
-    assert len(data["in_progress"]) == 2  # sample_game and game2
-    assert len(data["completed"]) == 2  # completed_game and game3
+    assert isinstance(data, list)
+    # Only completed games should be returned
+    assert len(data) == 2  # completed_game and game3
+    completed_ids = {g["id"] for g in data}
+    assert str(completed_game.id) in completed_ids
+    assert str(game3.id) in completed_ids
 
 
 @pytest.mark.django_db
 def test_api_list_games_ordering(api_client: APIClient) -> None:
     """Test that games are ordered by id."""
-    game1 = Game.objects.create(black_smartness=1)
-    game2 = Game.objects.create(black_smartness=2)
-    game3 = Game.objects.create(black_smartness=3)
+    game1 = Game.objects.create(black_smartness=1, in_progress=False)
+    game2 = Game.objects.create(black_smartness=2, in_progress=False)
+    game3 = Game.objects.create(black_smartness=3, in_progress=False)
 
     response = api_client.get("/api/games/")
 
     assert response.status_code == 200
     data = response.json()
-    games = data["in_progress"]
+    assert isinstance(data, list)
 
     # Should have all 3 games
-    assert len(games) == 3
+    assert len(data) == 3
 
     # All games should be present
-    smartness_values = {g["black_smartness"] for g in games}
+    smartness_values = {g["black_smartness"] for g in data}
     assert smartness_values == {1, 2, 3}
 
 
 @pytest.mark.django_db
 def test_api_list_games_json_response(api_client: APIClient) -> None:
     """Test that response is valid JSON."""
-    Game.objects.create()
+    Game.objects.create(in_progress=False)
 
     response = api_client.get("/api/games/")
 
     assert response.status_code == 200
     assert response["Content-Type"] == "application/json"
 
-    # Should be valid JSON
+    # Should be valid JSON list
     data = response.json()
-    assert isinstance(data, dict)
-    assert isinstance(data["in_progress"], list)
-    assert isinstance(data["completed"], list)
+    assert isinstance(data, list)
 
 
 @pytest.mark.django_db
-def test_api_list_games_response_structure(api_client: APIClient, sample_game: Game) -> None:
+def test_api_list_games_response_structure(api_client: APIClient, completed_game: Game) -> None:
     """Test that response has correct structure."""
     response = api_client.get("/api/games/")
 
     assert response.status_code == 200
     data = response.json()
 
-    # Check top-level structure
-    assert set(data.keys()) == {"in_progress", "completed"}
+    # Should be a list
+    assert isinstance(data, list)
+    assert len(data) == 1
 
     # Check game object structure
-    game_data = data["in_progress"][0]
+    game_data = data[0]
     expected_fields = {"id", "name", "in_progress", "move_count", "black_smartness", "whose_turn", "outcome"}
     assert set(game_data.keys()) == expected_fields
 
@@ -324,17 +320,17 @@ def test_api_list_allows_get_and_post(api_client: APIClient) -> None:
 @pytest.mark.django_db
 def test_api_list_games_with_various_smartness_levels(api_client: APIClient) -> None:
     """Test listing games with different AI difficulty levels."""
-    Game.objects.create(black_smartness=0)
-    Game.objects.create(black_smartness=5)
-    Game.objects.create(black_smartness=10)
+    Game.objects.create(black_smartness=0, in_progress=False)
+    Game.objects.create(black_smartness=5, in_progress=False)
+    Game.objects.create(black_smartness=10, in_progress=False)
 
     response = api_client.get("/api/games/")
 
     assert response.status_code == 200
     data = response.json()
-    games = data["in_progress"]
+    assert isinstance(data, list)
 
-    smartness_levels = [g["black_smartness"] for g in games]
+    smartness_levels = [g["black_smartness"] for g in data]
     assert 0 in smartness_levels
     assert 5 in smartness_levels
     assert 10 in smartness_levels
@@ -343,13 +339,15 @@ def test_api_list_games_with_various_smartness_levels(api_client: APIClient) -> 
 @pytest.mark.django_db
 def test_api_list_games_uuid_format(api_client: APIClient) -> None:
     """Test that game IDs are valid UUIDs."""
-    Game.objects.create()
+    Game.objects.create(in_progress=False)
 
     response = api_client.get("/api/games/")
 
     assert response.status_code == 200
     data = response.json()
-    game_id = data["in_progress"][0]["id"]
+    assert isinstance(data, list)
+    assert len(data) > 0
+    game_id = data[0]["id"]
 
     # Should be a valid UUID string
     import uuid
@@ -368,15 +366,15 @@ def test_api_list_games_cors_headers(api_client: APIClient) -> None:
 
 
 @pytest.mark.django_db
-def test_api_serializer_consistency(api_client: APIClient, sample_game: Game) -> None:
+def test_api_serializer_consistency(api_client: APIClient, completed_game: Game) -> None:
     """Test that API response matches direct serializer output."""
     # Get data from serializer directly
-    serializer = GameListSerializer(sample_game)
+    serializer = GameListSerializer(completed_game)
     serializer_data = serializer.data
 
     # Get data from API
     response = api_client.get("/api/games/")
-    api_data = response.json()["in_progress"][0]
+    api_data = response.json()[0]
 
     # Should be identical
     assert api_data == serializer_data
@@ -719,21 +717,21 @@ def test_games_have_unique_names() -> None:
 
 
 @pytest.mark.django_db
-def test_game_name_in_list_response(api_client: APIClient, sample_game: Game) -> None:
+def test_game_name_in_list_response(api_client: APIClient, completed_game: Game) -> None:
     """Test that game name appears in list API response."""
     response = api_client.get("/api/games/")
-    
+
     assert response.status_code == 200
     data = response.json()
-    
-    # Find our game in the response
-    all_games = data["in_progress"] + data["completed"]
-    our_game = next((g for g in all_games if g["id"] == str(sample_game.id)), None)
-    
-    assert our_game is not None, "Sample game should appear in response"
+
+    # Find our game in the response (list only shows completed games)
+    assert isinstance(data, list)
+    our_game = next((g for g in data if g["id"] == str(completed_game.id)), None)
+
+    assert our_game is not None, "Completed game should appear in response"
     assert "name" in our_game, "Game should have a name field"
     assert our_game["name"], "Game name should not be empty"
-    assert our_game["name"] == sample_game.name, "API should return the correct game name"
+    assert our_game["name"] == completed_game.name, "API should return the correct game name"
 
 
 @pytest.mark.django_db

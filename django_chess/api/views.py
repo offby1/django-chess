@@ -72,7 +72,7 @@ class GameViewSet(viewsets.ModelViewSet[Game]):
     ViewSet for game operations.
 
     Endpoints:
-    - list: GET /api/games/ - List all games grouped by status
+    - list: GET /api/games/ - List completed games
     - create: POST /api/games/ - Create a new game
     - retrieve: GET /api/games/<uuid>/ - Get game detail with board state
     - partial_update: PATCH /api/games/<uuid>/ - Update game settings
@@ -82,6 +82,13 @@ class GameViewSet(viewsets.ModelViewSet[Game]):
 
     queryset = Game.objects.all().order_by('-id')
     serializer_class = GameListSerializer
+
+    def get_queryset(self) -> Any:
+        """Return queryset, filtering for completed games only in list action."""
+        queryset = super().get_queryset()
+        if self.action == 'list':
+            return queryset.filter(in_progress=False)
+        return queryset
 
     def get_serializer_class(self) -> type[GameListSerializer] | type[GameDetailSerializer] | type[CreateGameSerializer] | type[UpdateGameSerializer]:
         """Return appropriate serializer based on action."""
@@ -95,20 +102,11 @@ class GameViewSet(viewsets.ModelViewSet[Game]):
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
-        Return games grouped by status: in_progress and completed.
+        Return completed games only.
         """
-        # Get all games
-        in_progress_games = Game.objects.filter(in_progress=True).order_by('-id')
-        completed_games = Game.objects.filter(in_progress=False).order_by('-id')
-
-        # Serialize the games
-        in_progress_serializer = GameListSerializer(in_progress_games, many=True)
-        completed_serializer = GameListSerializer(completed_games, many=True)
-
-        return Response({
-            'in_progress': in_progress_serializer.data,
-            'completed': completed_serializer.data
-        })
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """

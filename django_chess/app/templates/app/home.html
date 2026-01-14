@@ -5,14 +5,6 @@
 {% block content %}
     <script async src="https://js.stripe.com/v3/buy-button.js"></script>
     <div id="make-that-button-bigger">
-        <h3>Games In Progress</h3>
-        <ul>
-            {% for g in in_progress_games %}
-                <li>
-                    <a href="{% url "game" game_id=g.pk %}">{{ g.name }}</a>
-                </li>
-                {% endfor %}
-        </ul>
         <h3>Completed games</h3>
         <ul>
             {% for g in completed_games %}

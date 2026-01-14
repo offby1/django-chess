@@ -68,22 +68,15 @@ GNUCHESS_EXECUTABLE = _first_existing_executable(
 
 @require_http_methods(["GET"])
 def home(request: HttpRequest) -> HttpResponse:
-    completed_games = []
-    in_progress_games = []
-    for g in Game.objects.all():
-        if g.in_progress:
-            in_progress_games.append(g)
-        else:
-            completed_games.append(g)
+    completed_games = list(Game.objects.filter(in_progress=False))
 
     return TemplateResponse(
         request,
         "app/home.html",
         context={
             "completed_games": completed_games,
-            "in_progress_games": in_progress_games,
             "form": ImportPGNForm(),
-            "num_games": len(completed_games) + len(in_progress_games),
+            "num_games": len(completed_games),
         },
     )
 
