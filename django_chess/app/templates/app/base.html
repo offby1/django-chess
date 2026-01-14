@@ -2,143 +2,254 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="online chess, Yo">
-        <meta name="keywords" content="chess">
-        <title>Chess, Yo</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="Play chess online against an AI opponent">
+        <meta name="keywords" content="chess, online chess, chess game">
+        <title>
+            {% block title %}
+                Chess
+            {% endblock title %}
+        </title>
+        <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+        <script>
+            // CRITICAL: Run scroll restoration immediately, before any content renders
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+
+            // Save scroll position on any click (before navigation)
+            document.addEventListener('click', function(e) {
+                // Find the chess board element to save its position
+                var board = document.getElementById('chess-board');
+                if (board) {
+                    var boardRect = board.getBoundingClientRect();
+                    sessionStorage.setItem('boardOffsetTop', boardRect.top.toString());
+                }
+                sessionStorage.setItem('scrollPos', window.scrollY.toString());
+                sessionStorage.setItem('scrollTime', Date.now().toString());
+            }, true); // Use capture phase
+
+            // Restore scroll position when page loads
+            window.addEventListener('DOMContentLoaded', function() {
+                var scrollPos = sessionStorage.getItem('scrollPos');
+                var scrollTime = sessionStorage.getItem('scrollTime');
+                var boardOffsetTop = sessionStorage.getItem('boardOffsetTop');
+
+                if (scrollPos && scrollTime && (Date.now() - parseInt(scrollTime)) < 3000) {
+                    // Try to maintain board position
+                    if (boardOffsetTop) {
+                        var board = document.getElementById('chess-board');
+                        if (board) {
+                            var currentBoardTop = board.getBoundingClientRect().top;
+                            var targetBoardTop = parseFloat(boardOffsetTop);
+                            var scrollAdjustment = currentBoardTop - targetBoardTop;
+                            window.scrollTo(0, window.scrollY - scrollAdjustment);
+                        }
+                    } else {
+                        // Fallback to absolute scroll position
+                        window.scrollTo(0, parseInt(scrollPos));
+                    }
+                }
+            });
+        </script>
     </head>
-    <title>
-        {% block title %}
-            Chess
-        {% endblock title %}
-    </title>
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        <div id="content">
+        <header class="container">
+            <nav>
+                <ul>
+                    <li><strong><a href="/" style="text-decoration: none; color: inherit;">Chess</a></strong></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="container">
             {% block content %}
             {% endblock content %}
-        </div>
-        <div>{% include "app/version.html" %}</div>
+        </main>
+        <footer class="container">
+            <small>{% include "app/version.html" %}</small>
+        </footer>
     </body>
     <style>
+     /* Override Pico defaults for chess-specific styling */
+     html {
+         scroll-behavior: auto; /* Disable smooth scroll to prevent jump on navigation */
+     }
+
+     body {
+         overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+     }
+
+     .container {
+         max-width: 1200px;
+     }
+
+     /* Prevent layout shift during page navigation */
+     main.container {
+         min-height: 100vh;
+     }
+
+     /* Add scroll padding to account for header and provide space at top */
+     html {
+         scroll-padding-top: 1rem;
+     }
+
+     /* Ensure board anchor target is positioned correctly */
+     #chess-board {
+         scroll-margin-top: 1rem;
+     }
+
      div#make-that-button-bigger {
          display: flex;
          flex-direction: column;
          align-items: center;
-         form > button {
-             font-size: xx-large;
-         }
+         gap: 1rem;
      }
 
      .import-pgn-form {
-         border: 1px solid black;
-         margin: 10px;
-
+         /* Pico CSS article already provides nice styling */
+     }
+     .import-pgn-form form {
          display: flex;
          flex-direction: row;
+         align-items: flex-end;
+         gap: 1rem;
+         flex-wrap: wrap;
      }
 
      div#top {
          display: flex;
          flex-direction: column;
+         gap: 1rem;
      }
      div#smartness {
          display: flex;
          flex-direction: column;
+         gap: 0.5rem;
      }
      div#status-whatnots {
          display: flex;
          justify-content: space-between;
+         align-items: center;
+         gap: 1rem;
+         flex-wrap: wrap;
      }
      div#whose-turn {
-         font-size: x-large;
+         font-size: 1.5rem;
          font-weight: bold;
-     }
-     div#board-plus-eventlog {
-         display: flex;
-         flex-wrap: wrap;
      }
      div#event-log-and-captured-pieces {
          display: flex;
          flex-wrap: wrap;
+         gap: 1rem;
      }
      div#captured-pieces {
          display: flex;
          flex-direction: column;
          flex-wrap: wrap;
-         font-size: xx-large;
+         gap: 1rem;
+         font-size: 2rem;
      }
      div#white-captured-pieces   {
          display: flex;
          flex-direction: row;
          flex-wrap: wrap;
+         gap: 0.25rem;
      }
      div#black-captured-pieces   {
          display: flex;
          flex-direction: row;
          flex-wrap: wrap;
+         gap: 0.25rem;
      }
      div#event-log {
-         border: 1px solid;
-         font-family: monospace;
-         font-size: xx-large;
-         height: min(90vw, 90vh);;
-         overflow: scroll;
-         div {
-             border-bottom: 1px dashed;
-         }
-         /* White always makes the first move */
-         div:nth-of-type(odd) {
-             background-color: #eee;
-         }
-         div:nth-of-type(even) {
-             background-color: #666666;
-         }
+         border: 1px solid var(--pico-muted-border-color);
+         border-radius: var(--pico-border-radius);
+         font-family: var(--pico-font-family-monospace);
+         font-size: 1.25rem;
+         height: min(90vw, 90vh);
+         overflow: auto;
+         padding: 0.5rem;
      }
+     div#event-log div {
+         padding: 0.5rem;
+         border-bottom: 1px dashed var(--pico-muted-border-color);
+     }
+     /* White always makes the first move */
+     div#event-log div:nth-of-type(odd) {
+         background-color: var(--pico-card-background-color);
+     }
+     div#event-log div:nth-of-type(even) {
+         background-color: var(--pico-table-row-stripped-background-color);
+     }
+     /* Chess board styling */
      .board {
          display: grid;
-         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+         grid-template-columns: repeat(8, 1fr);
          width: min(90vw, 90vh);
-         margin: 10px;
-         border: thick black solid;
+         max-width: 600px; /* Prevent excessive size on large screens */
+         border: 4px solid var(--pico-secondary);
+         border-radius: var(--pico-border-radius);
+         overflow: hidden;
+         /* Ensure stable positioning */
+         position: relative;
+         margin: 0 auto; /* Center the board */
+     }
+
+     /* Prevent board container from shifting */
+     div#board-plus-eventlog {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 1rem;
+         position: relative;
+         min-height: min(90vw, 90vh);
      }
      .board > div {
-         border: 1px solid black;
+         border: 1px solid rgba(0, 0, 0, 0.1);
          aspect-ratio: 1;
          display: grid;
+         place-items: center;
+         font-size: clamp(2rem, 8vw, 4rem);
+         transition: background-color 0.2s ease;
      }
      .board > div > a {
          display: grid;
+         place-items: center;
+         width: 100%;
+         height: 100%;
+         text-decoration: none;
      }
      .board > div.dark {
-         background-color: darkgrey;
+         background-color: #b58863;
      }
      .board > div.light {
-         background-color: lightgrey;
+         background-color: #f0d9b5;
+     }
+     .board > div:hover {
+         opacity: 0.9;
      }
      .board > div > div {
          display: grid;
+         place-items: center;
      }
      .highlighted {
-         background-color: lightgreen;
+         background-color: #baca44 !important;
      }
      .potential-target {
-         background-color: blue;
+         background-color: #829769 !important;
      }
-     /* from https://www.perplexity.ai/search/using-css-or-bootstrap-how-can-A5U0WSQKTdS172ms6crEdQ */
+
+     /* Glow animation for possible moves */
      @keyframes throb {
-         0% {
-             box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+         0%, 100% {
+             box-shadow: inset 0 0 0 3px rgba(255, 215, 0, 0.7);
          }
-         70% {
-             box-shadow: 0 0 0 20px rgba(255, 215, 0, 0);
-         }
-         100% {
-             box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+         50% {
+             box-shadow: inset 0 0 0 3px rgba(255, 215, 0, 0.3);
          }
      }
 
      .glow {
-         animation: throb 1s infinite;
+         animation: throb 1.5s ease-in-out infinite;
      }
     </style>
     {% block scripts %}

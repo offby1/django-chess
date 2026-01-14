@@ -4,8 +4,15 @@
 {% endblock title %}
 {% block content %}
     <div id="top">
-        <h1>{{ game.name }}</h1>
-        {% if outcome %}<strong>{{ game.name }}</strong>'s outcome was {{ outcome }}{% endif %}
+        <hgroup>
+            <h1>{{ game.name }}</h1>
+            {% if outcome %}
+                <p><mark>Game Over: {{ outcome }}</mark></p>
+            {% elif whose_turn %}
+                <p>It's <strong>{{ whose_turn }}'s</strong> turn</p>
+            {% endif %}
+        </hgroup>
+
         {% if not outcome %}
             {% if whose_turn == "white" %}
                 <form id="move"
@@ -17,34 +24,41 @@
             {% endif %}
         {% endif %}
         <div id="board-plus-eventlog">
-            <div class="board">
+            <div class="board" id="chess-board">
                 {% for s in squares %}{{ s }}{% endfor %}
             </div>
             <div id="event-log-and-captured-pieces">
-                <div id="event-log">
+                <section id="event-log">
                     <h3>
                         <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">Moves</a>
                     </h3>
                     {% for line in event_log %}<div>{{ line }}</div>{% endfor %}
-                </div>
-                <div id="captured-pieces">
-                    <div id="black-captured-pieces">
-                        {% for piece in captured_pieces.0 %}<div>{{ piece }}</div>{% endfor %}
+                </section>
+
+                <section id="captured-pieces">
+                    <h4>Captured Pieces</h4>
+                    {% if captured_pieces.0 or captured_pieces.1 %}
+                        <div id="black-captured-pieces">
+                            {% for piece in captured_pieces.0 %}<div>{{ piece }}</div>{% endfor %}
+                        </div>
+                        <div id="white-captured-pieces">
+                            {% for piece in captured_pieces.1 %}<div>{{ piece }}</div>{% endfor %}
+                        </div>
+                    {% else %}
+                        <p><small><em>No pieces captured yet</em></small></p>
+                    {% endif %}
+
+                    <div style="margin-top: 1rem;">
+                        <a href="{% url 'pgn-game' game_id=game.pk %}" role="button" class="secondary">Download PGN</a>
                     </div>
-                    <div id="white-captured-pieces">
-                        {% for piece in captured_pieces.1 %}<div>{{ piece }}</div>{% endfor %}
-                    </div>
-                <div>
-                    <a href="{% url 'pgn-game' game_id=game.pk %}">PGN</a>
-                </div>
-                </div>
+                </section>
             </div>
         </div>
+
         <div id="status-whatnots">
             {% include "app/new-game-form.html" %}
             {% if not outcome %}
-            {% include "app/smartness-slider.html" %}
-                <div id="whose-turn">It's {{ whose_turn }}'s turn</div>
+                {% include "app/smartness-slider.html" %}
             {% endif %}
         </div>
     </div>
@@ -52,15 +66,17 @@
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
     <script>
+     // Scroll event log to end
      function scrollEventLogToEnd() {
-         var eventLog = document.querySelector("#event-log")
-         eventLog.scrollTop = eventLog.scrollHeight;
+         var eventLog = document.querySelector("#event-log");
+         if (eventLog) {
+             eventLog.scrollTop = eventLog.scrollHeight;
+         }
      }
+
      if (document.readyState === "loading") {
-         // Loading hasn't finished yet
          document.addEventListener("DOMContentLoaded", scrollEventLogToEnd);
      } else {
-         // `DOMContentLoaded` has already fired
          scrollEventLogToEnd();
      }
     </script>

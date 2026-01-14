@@ -75,13 +75,13 @@ def html_for_square(
                     rank=chess.square_rank(square),
                     file=chess.square_file(square),
                 ),
-            )
+            ) + "#chess-board"
         case SquareFlavor.SELECTED:
             css_class = "highlighted"
             link_target = reverse(
                 "game",
                 kwargs=dict(game_id=game_id),
-            )
+            ) + "#chess-board"
         case SquareFlavor.MOVE_HERE | SquareFlavor.CAPTURABLE_PIECE:
             assert selected_square is not None
             button_magic = move_button(game_id=game_id, from_=selected_square, to=square)

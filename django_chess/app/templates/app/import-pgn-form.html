@@ -1,8 +1,12 @@
-<form class="import-pgn-form"
-      enctype="multipart/form-data"
-      method="post"
-      action="{% url 'import-pgn' %}">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Import">
-</form>
+<article class="import-pgn-form">
+    <header>
+        <h3>Import PGN</h3>
+    </header>
+    <form enctype="multipart/form-data"
+          method="post"
+          action="{% url 'import-pgn' %}">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Import Game</button>
+    </form>
+</article>
