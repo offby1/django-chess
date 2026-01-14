@@ -5,10 +5,17 @@ from functools import lru_cache
 from pathlib import Path
 
 
+# API version number - increment when making breaking changes to the API
+# Version history:
+# 1: Original API with /api/games/ returning {in_progress: [], completed: []}
+# 2: Breaking change - /api/games/ returns flat list [] of completed games only
+API_VERSION = 2
+
+
 @lru_cache(maxsize=1)
-def get_version() -> str:
+def get_git_version() -> str:
     """
-    Get the application version (git commit hash).
+    Get the git commit hash for informational purposes.
 
     First tries to read from version.html template (for production).
     Falls back to git rev-parse HEAD (for development).
