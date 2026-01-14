@@ -3,6 +3,8 @@ Thinking about another django game, roughly similar to bridge: chess.
 
 Otta be a lot simpler.
 
+## Deployment checklist
+- [ ] Ponder any changes you've made that might break the API contract; if so, bump the `API_VERSION` in `app/version.py`, and make the necessary corresponding changes in the django-chess-android project.
 ## urls
 
 ### GET /game/1
