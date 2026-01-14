@@ -7,7 +7,16 @@ from django_extensions.db.models import TimeStampedModel
 from django_chess.name_generator import generate_game_name
 
 
+class GameManager(models.Manager["Game"]):
+    """Custom manager for Game model with shared query methods."""
+
+    def ordered_queryset(self) -> models.QuerySet["Game"]:
+        """Return games ordered by creation time (newest first), then by name."""
+        return self.get_queryset().order_by('-created', 'name')
+
+
 class Game(TimeStampedModel):
+    objects: GameManager = GameManager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=True)
     in_progress = models.BooleanField(default=True)
