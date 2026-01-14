@@ -78,9 +78,11 @@ backup:
     DOCKER_CONTEXT=chess docker compose exec -T django uv run --no-dev python /chess/backup_db.py
 
     echo "Copying backup from container..."
-    DOCKER_CONTEXT=chess docker compose cp django:/chess/data/backup.db ./db.sqlite3
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    backup_file="./db-${timestamp}.sqlite3"
+    DOCKER_CONTEXT=chess docker compose cp django:/chess/data/backup.db "${backup_file}"
 
     echo "Cleaning up..."
     DOCKER_CONTEXT=chess docker compose exec -T django rm /chess/data/backup.db /chess/backup_db.py
 
-    echo "Production database backed up to ./db.sqlite3"
+    echo "Production database backed up to ${backup_file}"
