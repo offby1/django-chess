@@ -3,10 +3,11 @@ import uuid
 import chess
 
 from django.db import models
+from django_extensions.db.models import TimeStampedModel
 from django_chess.name_generator import generate_game_name
 
 
-class Game(models.Model):
+class Game(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=True)
     in_progress = models.BooleanField(default=True)
@@ -18,7 +19,7 @@ class Game(models.Model):
         if not self.name:
             # Use UUID's integer representation as seed for deterministic names
             self.name = generate_game_name(seed=self.id.int)
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # type: ignore[no-untyped-call]
 
     def promoting_push(self, board: chess.Board, move: chess.Move) -> None:
         # unfortunately this is effectively a copy of some code in Board.is_pseudo_legal

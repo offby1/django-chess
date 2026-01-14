@@ -38,6 +38,7 @@ CSRF_TRUSTED_ORIGINS = ["https://*.tail571dc2.ts.net"]
 
 INSTALLED_APPS = [
     "debug_toolbar",
+    "django_extensions",
     "django_chess.app",
     "django.contrib.admin",
     "django.contrib.auth",

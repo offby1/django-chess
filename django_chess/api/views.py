@@ -80,7 +80,7 @@ class GameViewSet(viewsets.ModelViewSet[Game]):
     - moves: POST /api/games/<uuid>/moves/ - Make a move
     """
 
-    queryset = Game.objects.all().order_by('-id')
+    queryset = Game.objects.all().order_by('-created', 'name')
     serializer_class = GameListSerializer
 
     def get_queryset(self) -> Any:
