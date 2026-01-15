@@ -61,8 +61,7 @@ def get_black_move(board: chess.Board, smartness: int) -> chess.Move | None:
         # Otherwise make a random legal move
         legal_moves = list(board.legal_moves)
         if legal_moves:
-            random.shuffle(legal_moves)
-            return legal_moves[0]
+            return random.choice(legal_moves)
 
     return None
 
