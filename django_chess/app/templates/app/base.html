@@ -17,8 +17,16 @@
                 history.scrollRestoration = 'manual';
             }
 
+            // On desktop (not mobile), prevent anchor scrolling
+            var isDesktop = window.innerWidth > 768;
+
             // Save scroll position on any click (before navigation)
             document.addEventListener('click', function(e) {
+                if (isDesktop) {
+                    // On desktop, save current position to restore after navigation
+                    sessionStorage.setItem('desktopScrollPos', window.scrollY.toString());
+                }
+
                 // Find the chess board element to save its position
                 var board = document.getElementById('chess-board');
                 if (board) {
@@ -29,26 +37,45 @@
                 sessionStorage.setItem('scrollTime', Date.now().toString());
             }, true); // Use capture phase
 
-            // Restore scroll position when page loads
-            window.addEventListener('DOMContentLoaded', function() {
-                var scrollPos = sessionStorage.getItem('scrollPos');
+            // Function to restore scroll position
+            function restoreScroll() {
                 var scrollTime = sessionStorage.getItem('scrollTime');
-                var boardOffsetTop = sessionStorage.getItem('boardOffsetTop');
 
-                if (scrollPos && scrollTime && (Date.now() - parseInt(scrollTime)) < 3000) {
-                    // Try to maintain board position
-                    if (boardOffsetTop) {
-                        var board = document.getElementById('chess-board');
-                        if (board) {
-                            var currentBoardTop = board.getBoundingClientRect().top;
-                            var targetBoardTop = parseFloat(boardOffsetTop);
-                            var scrollAdjustment = currentBoardTop - targetBoardTop;
-                            window.scrollTo(0, window.scrollY - scrollAdjustment);
+                if (scrollTime && (Date.now() - parseInt(scrollTime)) < 3000) {
+                    if (isDesktop) {
+                        // On desktop, restore exact scroll position
+                        var desktopScrollPos = sessionStorage.getItem('desktopScrollPos');
+                        if (desktopScrollPos) {
+                            window.scrollTo(0, parseInt(desktopScrollPos));
                         }
                     } else {
-                        // Fallback to absolute scroll position
-                        window.scrollTo(0, parseInt(scrollPos));
+                        // On mobile, let the anchor scroll behavior work
+                        var scrollPos = sessionStorage.getItem('scrollPos');
+                        var boardOffsetTop = sessionStorage.getItem('boardOffsetTop');
+
+                        if (boardOffsetTop) {
+                            var board = document.getElementById('chess-board');
+                            if (board) {
+                                var currentBoardTop = board.getBoundingClientRect().top;
+                                var targetBoardTop = parseFloat(boardOffsetTop);
+                                var scrollAdjustment = currentBoardTop - targetBoardTop;
+                                window.scrollTo(0, window.scrollY - scrollAdjustment);
+                            }
+                        } else if (scrollPos) {
+                            window.scrollTo(0, parseInt(scrollPos));
+                        }
                     }
+                }
+            }
+
+            // Restore on DOMContentLoaded
+            window.addEventListener('DOMContentLoaded', restoreScroll);
+
+            // Also restore on load event to override anchor scrolling
+            window.addEventListener('load', function() {
+                if (isDesktop) {
+                    // On desktop, override any anchor scrolling
+                    setTimeout(restoreScroll, 0);
                 }
             });
         </script>
@@ -88,14 +115,23 @@
          min-height: 100vh;
      }
 
-     /* Add scroll padding to account for header and provide space at top */
+     /* On desktop, prevent anchor scrolling entirely */
      html {
-         scroll-padding-top: 1rem;
+         scroll-padding-top: 0;
      }
 
-     /* Ensure board anchor target is positioned correctly */
      #chess-board {
-         scroll-margin-top: 1rem;
+         scroll-margin-top: 0;
+     }
+
+     /* On mobile, use larger scroll margin to keep board centered */
+     @media (max-width: 768px) {
+         html {
+             scroll-padding-top: 20vh;
+         }
+         #chess-board {
+             scroll-margin-top: 20vh;
+         }
      }
 
      div#make-that-button-bigger {
@@ -193,6 +229,13 @@
          /* Ensure stable positioning */
          position: relative;
          margin: 0 auto; /* Center the board */
+     }
+     /* Override Pico CSS button width inside chess board */
+     .board button {
+         width: auto !important;
+         min-width: 0 !important;
+         padding: 0.25rem !important;
+         font-size: 0.75rem !important;
      }
 
      /* Prevent board container from shifting */
