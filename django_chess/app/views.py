@@ -68,7 +68,7 @@ GNUCHESS_EXECUTABLE = _first_existing_executable(
 
 @require_http_methods(["GET"])
 def home(request: HttpRequest) -> HttpResponse:
-    completed_games = list(Game.objects.ordered_queryset().filter(in_progress=False))  # type: ignore[attr-defined]
+    completed_games = list(Game.objects.ordered_queryset().filter(in_progress=False))
 
     return TemplateResponse(
         request,

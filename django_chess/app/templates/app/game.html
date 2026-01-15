@@ -38,14 +38,16 @@
                 <section id="captured-pieces">
                     <h4>Captured Pieces</h4>
                     {% if captured_pieces.0 or captured_pieces.1 %}
+                    <div style="background: grey">
                         <div id="black-captured-pieces">
                             {% for piece in captured_pieces.0 %}<div>{{ piece }}</div>{% endfor %}
                         </div>
                         <div id="white-captured-pieces">
                             {% for piece in captured_pieces.1 %}<div>{{ piece }}</div>{% endfor %}
                         </div>
+                    </div>
                     {% else %}
-                        <p><small><em>No pieces captured yet</em></small></p>
+                    <p><small><em>No pieces captured yet</em></small></p>
                     {% endif %}
 
                     <div style="margin-top: 1rem;">
