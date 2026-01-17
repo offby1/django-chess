@@ -198,19 +198,25 @@
          border-radius: var(--pico-border-radius);
          font-family: var(--pico-font-family-monospace);
          font-size: 1.25rem;
-         max-height: 500px; /* Match chess board max-height */
-         overflow-y: auto; /* Enable vertical scrolling */
          padding: 0.5rem;
      }
-     #event-log div {
+     #event-log h3 {
+         margin-top: 0;
+         margin-bottom: 0.5rem;
+     }
+     #event-log-scrollable {
+         max-height: 400px; /* Constrain scrollable area */
+         overflow-y: auto; /* Enable vertical scrolling */
+     }
+     #event-log-scrollable > div {
          padding: 0.5rem;
          border-bottom: 1px dashed var(--pico-muted-border-color);
      }
      /* White always makes the first move */
-     #event-log div:nth-of-type(odd) {
+     #event-log-scrollable > div:nth-of-type(odd) {
          background-color: var(--pico-card-background-color);
      }
-     #event-log div:nth-of-type(even) {
+     #event-log-scrollable > div:nth-of-type(even) {
          background-color: rgba(255, 255, 255, 0.10); /* Light gray for contrast */
      }
      /* Chess board styling */
