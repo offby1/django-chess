@@ -193,35 +193,35 @@
          flex-wrap: wrap;
          gap: 0.25rem;
      }
-     div#event-log {
+     #event-log {
          border: 1px solid var(--pico-muted-border-color);
          border-radius: var(--pico-border-radius);
          font-family: var(--pico-font-family-monospace);
          font-size: 1.25rem;
-         height: min(90vw, 90vh);
-         overflow: auto;
+         max-height: 500px; /* Match chess board max-height */
+         overflow-y: auto; /* Enable vertical scrolling */
          padding: 0.5rem;
      }
-     div#event-log div {
+     #event-log div {
          padding: 0.5rem;
          border-bottom: 1px dashed var(--pico-muted-border-color);
      }
      /* White always makes the first move */
-     div#event-log div:nth-of-type(odd) {
+     #event-log div:nth-of-type(odd) {
          background-color: var(--pico-card-background-color);
      }
-     div#event-log div:nth-of-type(even) {
-         background-color: var(--pico-table-row-stripped-background-color);
+     #event-log div:nth-of-type(even) {
+         background-color: rgba(255, 255, 255, 0.10); /* Light gray for contrast */
      }
      /* Chess board styling */
      .board {
          display: grid;
          grid-template-columns: repeat(8, minmax(0, 1fr));
          grid-template-rows: repeat(8, minmax(0, 1fr));
-         width: min(90vw, 90vh);
-         height: min(90vw, 90vh); /* Match width to make board square */
-         max-width: 600px; /* Prevent excessive size on large screens */
-         max-height: 600px; /* Match max-width */
+         width: min(90vw, 60vh);
+         height: min(90vw, 60vh); /* Match width to make board square */
+         max-width: 500px; /* Prevent excessive size on large screens */
+         max-height: 500px; /* Match max-width */
          border: 4px solid var(--pico-secondary);
          border-radius: var(--pico-border-radius);
          overflow: hidden;
@@ -243,7 +243,7 @@
          flex-wrap: wrap;
          gap: 1rem;
          position: relative;
-         min-height: min(90vw, 90vh);
+         min-height: min(90vw, 60vh);
      }
      .board > div {
          border: 1px solid rgba(0, 0, 0, 0.1);
